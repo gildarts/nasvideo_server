@@ -1,8 +1,7 @@
 import Router from 'koa-router';
 import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
-import fsex from 'fs-extra';
-import path from 'path';
+import { VideoRoot } from '../common/file_system';
 
 const db = connections.default;
 
@@ -12,22 +11,20 @@ export class FS {
         const { videoRoot } = ctx;
         const { q = '.' } = ctx.query;
 
-        const dirs = await fsex.readdir(path.join(videoRoot, q));
-        const pathList = dirs.map(v => path.join(videoRoot, q, v));
-
-        const pathInfoList = []
-        for(const fp of pathList) {
-            const fpstat = await fsex.stat(fp);
-            pathInfoList.push({
-                name: fp,
-                isDir: fpstat.isDirectory(),
-                isFile: fpstat.isFile(),
-                size: fpstat.size,
-            });
-        }
+        const vr = new VideoRoot(videoRoot);
+       
+        const pathInfoList = await vr.list(q);
 
         ctx.body = {
-            videos: pathInfoList
+            videos: pathInfoList.map(v => {
+                return {
+                    path: v.path,
+                    name: v.name,
+                    isFile: v.isFile, 
+                    size: v.size, 
+                    format: v.format
+                };
+            })
         };
     }
 
