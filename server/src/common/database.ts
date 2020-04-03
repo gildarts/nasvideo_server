@@ -7,7 +7,7 @@
  */
 
 import PGP from 'pg-promise';
-import * as conf from '../config.json';
+import conf from '../config';
 import PG from 'pg-promise';
 
 const pgp = PG();

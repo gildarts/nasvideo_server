@@ -3,6 +3,8 @@ import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
 const db = connections.default;
 
+import fs from 'fs-extra';
+
 export class FS {
 
     public static async list(ctx: ServiceContext) {
