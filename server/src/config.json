@@ -7,7 +7,13 @@
         "port": 5433
     },
     "video_roots": [
-        "/Volumes/video",
-        "/video"
+        {
+            "name": "default",
+            "path": "/Volumes/video"
+        },
+        {
+            "name": "zoe",
+            "path": "/video"
+        }
     ]
 }

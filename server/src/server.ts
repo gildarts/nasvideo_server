@@ -5,9 +5,8 @@ import send from 'koa-send';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser'
 import createSession from './common/session_store';
-import { setupDBConnection, setupAuthStatus, checkSessionData, setXFrameOptionsDENY } from './common/middlewares';
+import { setupDBConnection, checkSessionData, setXFrameOptionsDENY } from './common/middlewares';
 import allservice from './service';
-import { FormDataParser } from './common/formdata_parser';
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,7 +16,6 @@ async function main(app: Koa) {
     app.use(bodyParser());
     app.use(setupDBConnection);
     app.use(createSession(app));
-    app.use(setupAuthStatus);
     app.use(checkSessionData);
 
     // 所有 server side 程式都由 /service 路徑開始。
@@ -39,8 +37,6 @@ async function main(app: Koa) {
 
     const server = http.createServer(app.callback()).listen(PORT);
     (app as any).server = server;
-
-    await FormDataParser.initPath();
 
     console.log('complete');
 }
