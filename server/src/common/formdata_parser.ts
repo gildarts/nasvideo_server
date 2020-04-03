@@ -1,4 +1,4 @@
-import { ServiceContext } from '../hlc_types';
+import { ServiceContext } from '../types';
 import { db } from './database';
 import formidable from 'formidable';
 import * as path from 'path';

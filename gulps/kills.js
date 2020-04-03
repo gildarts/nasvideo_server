@@ -30,7 +30,7 @@ exports.webpack = (done) => {
 exports.pm2 = (done) => {
     // pm2 delete protal-service
     console.info('************** Kill PM2 **************');
-    exec(`pm2 delete hlc_boe_server`, {
+    exec(`pm2 delete nas-video`, {
         cwd: serverPath
     }).once('close', () => {
         done();

@@ -18,10 +18,10 @@ exports.build = series(output.cleanup, parallel(build.build_client, build.build_
 exports.build_service = series(build.build_service, build.copy);
 exports.deploy = series(build.deploy);
 exports.prod = series(output.cleanup, exports.build, exports.deploy);
-exports.default = series(kill_parallels, parallel(devenv.mkcert, devenv.client_start, devenv.server_start_dev), devenv.server_start_pm2, devenv.pm2_log);
+exports.dev = series(kill_parallels, parallel(devenv.mkcert, devenv.client_start, devenv.server_start_dev), devenv.server_start_pm2, devenv.pm2_log);
 exports.mkcert = devenv.mkcert;
 
-exports.help = (done) => {
+exports.default = (done) => {
 
     console.log(` ========== 指令說明 ==========
 gulp install # 安裝 angular、nodejs 相關必要套件。

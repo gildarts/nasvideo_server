@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { ServiceContext } from '../hlc_types';
+import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
 const db = connections.default;
 

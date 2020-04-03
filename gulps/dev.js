@@ -8,20 +8,22 @@ const fs = require('fs');
 const path = require('path');
 
 exports.mkcert = (done) => {
-    console.log('************** 檢查憑證 **************');
 
-    const certPath = path.join(clientPath, 'hualienword.edu.tw.pem');
+    done();
+    // console.log('************** 檢查憑證 **************');
 
-    if(!fs.existsSync(certPath)) {
-        console.log('建立本機憑證...');
-        spawn('yarn', ['mkcert'], {
-            cwd: clientPath,
-            stdio: "inherit"
-        }).once('close', () => done());
-    } else {
-        console.log('不需建立本機憑證...');
-        done();
-    }
+    // const certPath = path.join(clientPath, 'hualienword.edu.tw.pem');
+
+    // if(!fs.existsSync(certPath)) {
+    //     console.log('建立本機憑證...');
+    //     spawn('yarn', ['mkcert'], {
+    //         cwd: clientPath,
+    //         stdio: "inherit"
+    //     }).once('close', () => done());
+    // } else {
+    //     console.log('不需建立本機憑證...');
+    //     done();
+    // }
 }
 
 exports.client_start = (done) => {

@@ -1,4 +1,4 @@
-import { ServiceContext } from '../hlc_types';
+import { ServiceContext } from '../types';
 import { db } from './database';
 import { Auth } from './auth';
 import { ACLQuery } from './acl_query';
