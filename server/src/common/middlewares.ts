@@ -1,5 +1,6 @@
 import { ServiceContext } from '../types';
 import { db } from './database';
+import { getVideoRoot } from '../config';
 
 export const setXFrameOptionsDENY = (ctx: ServiceContext, next: () => Promise<void>) => {
     ctx.response.set({
@@ -23,3 +24,8 @@ export const checkSessionData = (ctx: ServiceContext, next: () => Promise<void>)
         return next();
     }
 }
+
+export const setVideoRoot = (ctx: ServiceContext, next: () => Promise<void>) => {
+    ctx.videoRoot = getVideoRoot(ctx);
+    return next();
+};

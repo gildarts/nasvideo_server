@@ -1,23 +1,33 @@
 import Router from 'koa-router';
 import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
-import fs from 'fs-extra';
-import conf, { getVideoRoot } from '../config';
+import fsex from 'fs-extra';
+import path from 'path';
 
 const db = connections.default;
 
 export class FS {
 
     public static async list(ctx: ServiceContext) {
+        const { videoRoot } = ctx;
+        const { q = '.' } = ctx.query;
 
-        const root = getVideoRoot(ctx);
+        const dirs = await fsex.readdir(path.join(videoRoot, q));
+        const pathList = dirs.map(v => path.join(videoRoot, q, v));
 
-        const paths = await fs.readdir(root);
+        const pathInfoList = []
+        for(const fp of pathList) {
+            const fpstat = await fsex.stat(fp);
+            pathInfoList.push({
+                name: fp,
+                isDir: fpstat.isDirectory(),
+                isFile: fpstat.isFile(),
+                size: fpstat.size,
+            });
+        }
 
-        const records = await db.manyOrNone('select * from savior');
         ctx.body = {
-            videos: paths,
-            data: records
+            videos: pathInfoList
         };
     }
 
