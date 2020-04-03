@@ -1,0 +1,9 @@
+{
+    "db": {
+        "host": "speedfusiondb",
+        "database": "underground",
+        "user": "videouser",
+        "password": "videouser",
+        "port": 5432
+    }
+}
