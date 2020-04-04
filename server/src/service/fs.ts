@@ -3,6 +3,7 @@ import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
 import { VideoFS } from '../common/video_fs';
 import { VideoFile } from '../common/video_file';
+import { FFMpeg } from '../ffmpeg';
 
 const db = connections.default;
 
@@ -30,14 +31,22 @@ export class FS {
         };
     }
 
-    public static async video(ctx: ServiceContext) {
-        const vod = `/Volumes/video/tvmv/4k_video/8k_181006 (HELLOVENUS), (NARA)(FANCAM).mkv`;
+    public static async metadata(ctx: ServiceContext) {
+        // const vod = `/Volumes/video/movie/(英倫對決)The.Foreigner.2017.1080p.BluRay.x264/Movie/The.Foreigner.2017.1080p.BluRay.x264.mkv`
+        // const vod = `/Volumes/video/movie/雷霆沙赞.Shazam.2019.HD720P.x264.英语中文字幕.Eng.CHS.Korean.aac2.0.btzimu/雷霆沙赞.Shazam.2019.HD720P.x264.英语中文字幕.Eng.CHS.Korean.aac2.0.btzimu.mp4`;
+        // const vod = `/Volumes/video/movie/(移動迷宮)Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT/Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT.mkv`;
+        // const vod = `/Volumes/video/movie/(氣象戰)Geostorm.2017.1080p.WEB-DL.X264.AC3-EVO/Geostorm.2017.1080p.WEB-DL.X264.AC3-EVO.mkv`;
+        const vod = `/Users/yaoming/opt/4kf.mp4`;
 
-        ctx.body = {};
+        const ffmpeg = new FFMpeg(vod);
+
+        const metadata = await ffmpeg.execute();
+        ctx.body = metadata;
     }
+
 }
 
 export default new Router()
     .get('/fs/list', FS.list)
-    .get('/fs/video', FS.video)
+    .get('/fs/metadata', FS.metadata)
     ;
