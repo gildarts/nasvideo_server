@@ -13,8 +13,6 @@ export class FSEntry {
         private state: fsex.Stats
     ) { }
 
-    public static notExists = new FSEntry('not exists', 'not exists', new fsex.Stats());
-
     /**
      * 取得檔案絕對路徑。
      * @param withName 是否包含檔名。
@@ -55,9 +53,5 @@ export class FSEntry {
         }
 
         return list.find(v => v === this.name);
-    }
-
-    public get exists() {
-        return this !== FSEntry.notExists;
     }
 }

@@ -31,15 +31,7 @@ export class FS {
     }
 
     public static async exists(ctx: ServiceContext) {
-        const vr = new VideoFS(ctx.videoRoot);
-
-        const file1 = await vr.fromPath('tvmv/4k_videoa', '161009 Up & Down by Spinel.mkv');
-        const file2 = await vr.fromPath('tvmv/4k_video', '161009 Up & Down by Spinel.mkv');
-
-        ctx.body = {
-            file1: file1.exists,
-            file2: file2.exists
-        }
+        ctx.body = {};
     }
 }
 

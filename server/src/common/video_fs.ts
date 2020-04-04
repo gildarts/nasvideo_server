@@ -32,24 +32,6 @@ export class VideoFS {
             return fsentries;
         }
     }
-
-        /**
-     * 從指定路徑載入 VideoFile。
-     * @param {string} relPath 檔案路徑。
-     * @param {string} name 檔案名稱。
-     */
-    public async fromPath(relPath: string, name: string) {
-        const fullpath = path.join(this.basePath, relPath, name);
-
-        if(await fsex.pathExists(fullpath)) {
-            const fpstat = await fsex.stat(fullpath);
-            const entry = new FSEntry(relPath, name, fpstat);
-            return entry;    
-        } else {
-            return FSEntry.notExists;
-        }
-
-    }
 }
 
 
