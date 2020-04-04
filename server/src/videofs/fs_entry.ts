@@ -8,10 +8,17 @@ import { VideoFS } from './video_fs';
 export class FSEntry {
 
     constructor(
-        private path: string,
-        public name: string,
+        filePath: string,
         private state: fsex.Stats
-    ) { }
+    ) {
+        const paths = filePath.split('/').reverse();
+        this.name = paths.shift();
+        this.path = paths.reverse().join('/');
+    }
+
+    public path: string;
+
+    public name: string;
 
     /**
      * 取得檔案絕對路徑。

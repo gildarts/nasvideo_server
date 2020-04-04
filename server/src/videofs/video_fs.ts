@@ -23,7 +23,7 @@ export class VideoFS {
 
             // 加上基礎路徑才是完整路徑。
             const fpstat = await fsex.stat(path.join(this.basePath, file));
-            fsentries.push(new FSEntry(relPath, e, fpstat));
+            fsentries.push(new FSEntry(file, fpstat));
         }
 
         if(withoutSystemFile) {
