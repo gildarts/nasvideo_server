@@ -1,12 +1,11 @@
 import Router from 'koa-router';
 import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
-import { VideoFS } from '../common/video_fs';
-import { VideoFile } from '../common/video_file';
+import { VideoFS } from '../videofs/video_fs';
+import { VideoFile } from '../videofs/video_file';
 import { FFMpeg } from '../ffmpeg';
 
 const db = connections.default;
-
 export class FS {
 
     public static async list(ctx: ServiceContext) {
