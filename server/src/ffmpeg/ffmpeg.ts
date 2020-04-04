@@ -1,5 +1,5 @@
 import { TimeUtil } from './time_util';
-import { CliCommand } from './cli_command';
+import { FFProbeCLI } from './cli';
 
 /** 可處理影片相關事務。 */
 export class FFMpeg {
@@ -19,7 +19,7 @@ export class FFMpeg {
     public async getMetadata() {
         const cmd = `ffprobe "${this.absolutePath}" -show_entries stream=duration,width,height,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet`;
 
-        const cli = new CliCommand(cmd);
+        const cli = new FFProbeCLI(cmd);
 
         const result = await cli.execute();
 

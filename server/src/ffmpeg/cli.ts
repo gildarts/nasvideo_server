@@ -1,23 +1,24 @@
 import { exec } from "child_process";
+import { FSUtil } from '../common/fs_util';
 
-export interface CliResult {
+export interface CLIResult {
     code: number;
 
     output: string;
 }
 
-export class CliCommand {
+export abstract class CLI {
 
     constructor(
-        private command: string
+        protected command: string
     ) { }
 
     public execute() {
         const { command: cmd } = this;
 
-        const p = exec(cmd);
+        const p = exec(cmd, {cwd: this.getCWD()});
 
-        return new Promise<CliResult>((r, j) => {
+        return new Promise<CLIResult>((r, j) => {
             let lines: string[] = [], error = null;
             p.stdout.on('data', (chunk) => {
                 lines.push(chunk);
@@ -43,4 +44,28 @@ export class CliCommand {
             });
         });
     }
+
+    /** 取得工作目錄。 */
+    public abstract getCWD(): string;
+}
+
+export class FFProbeCLI extends CLI {
+
+    public getCWD(): string {
+        
+        const parts = this.command.split(' ');
+
+        let part: string = null;
+        while(!!(part = parts.shift())) {
+            if (part.startsWith('/')) { break; }
+
+            if(part.startsWith('"/')) {
+                part = part.substr(1, part.length - 2);
+                break;
+            }
+        }
+
+        return FSUtil.pathSplite(part).path;
+    }
+
 }
