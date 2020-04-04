@@ -1,6 +1,9 @@
 import { FSEntry } from './fs_entry';
 import { Util } from './util';
 
+/**
+ *代表一個影片檔案，不含其他檔案資訊。
+ */
 export class VideoFile {
 
     constructor(

@@ -2,6 +2,9 @@ import fsex from 'fs-extra';
 import path from 'path';
 import { FSEntry } from './fs_entry';
 
+/**
+ * 可處理媒體檔與非媒體檔增刪調整。
+ */
 export class VideoFS {
 
     constructor(public basePath: string) { }

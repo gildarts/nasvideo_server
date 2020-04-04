@@ -2,10 +2,12 @@ import fsex from 'fs-extra';
 import path from 'path';
 import { VideoFS } from './video_fs';
 
+/**
+ *可代表媒體檔與非媒體檔案。
+ */
 export class FSEntry {
 
     constructor(
-        private root: VideoFS,
         private path: string,
         public name: string,
         private state: fsex.Stats
@@ -15,11 +17,11 @@ export class FSEntry {
      * 取得檔案絕對路徑。
      * @param withName 是否包含檔名。
      */
-    public getAbsolutePath(withName: boolean = true) {
+    public getAbsolutePath(fs: VideoFS, withName: boolean = true) {
         if (withName) {
-            return path.join(this.base, this.path, this.name);
+            return path.join(fs.basePath, this.path, this.name);
         } else {
-            return path.join(this.base, this.path);
+            return path.join(fs.basePath, this.path);
         }
     }
 
@@ -51,10 +53,6 @@ export class FSEntry {
         }
 
         return list.find(v => v === this.name);
-    }
-
-    private get base() {
-        return this.root.basePath;
     }
 
 }
