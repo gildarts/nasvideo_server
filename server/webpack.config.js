@@ -17,6 +17,7 @@ module.exports = {
         __dirname: false
     },
     externals: [NodeExternals(), {
+        // 編譯前的寫法對照「編譯後的寫法」。
         config: 'commonjs ./config.json'
     }],
     module: {

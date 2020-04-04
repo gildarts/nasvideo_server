@@ -1,7 +1,8 @@
 import Router from 'koa-router';
 import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
-import { VideoRoot, VideoFile } from '../common/file_system';
+import { VideoFS } from '../common/video_fs';
+import { VideoFile } from '../common/video_file';
 
 const db = connections.default;
 
@@ -11,8 +12,8 @@ export class FS {
         const { videoRoot } = ctx;
         const { q = '.' } = ctx.query;
 
-        const vr = new VideoRoot(videoRoot);
-        const pathInfoList = await vr.list(q, true);
+        const vr = new VideoFS(videoRoot);
+        const pathInfoList = await vr.list(q);
 
         ctx.body = {
             videos: pathInfoList

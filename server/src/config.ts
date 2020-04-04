@@ -1,4 +1,4 @@
-import * as conf from './config.json';
+import * as conf from 'config';
 import { ServiceContext } from 'types';
 
 export const getVideoRoot = (ctx: ServiceContext) => {
