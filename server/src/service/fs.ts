@@ -41,7 +41,7 @@ export class FS {
 
         const ffmpeg = new FFMpeg(vod.absolutePath);
 
-        const metadata = await ffmpeg.execute();
+        const metadata = await ffmpeg.getMetadata();
         ctx.body = metadata;
     }
 

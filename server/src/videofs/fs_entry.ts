@@ -1,7 +1,7 @@
 import fsex from 'fs-extra';
 import path from 'path';
 import { VideoFS } from './video_fs';
-
+import { FSUtil } from '../common/fs_util';
 /**
  *可代表媒體檔與非媒體檔案。
  */
@@ -11,9 +11,10 @@ export class FSEntry {
         filePath: string,
         private state: fsex.Stats
     ) {
-        const paths = filePath.split('/').reverse();
-        this.name = paths.shift();
-        this.path = paths.reverse().join('/');
+        const pathParts = FSUtil.pathSplite(filePath);
+
+        this.name = pathParts.file;
+        this.path = pathParts.path;
     }
 
     public path: string;
