@@ -43,15 +43,30 @@ export class FSEntry {
 
     public get isFile() { return this.state.isFile(); }
 
+    /**
+     * 是否為總統檔案，包含一些 metadata 檔案。
+     *
+     * @readonly
+     * @memberof FSEntry
+     */
     public get isSystemFile() {
-        const list = [
+        const equals = [
             '.DS_Store'
+        ]
+
+        const endWiths = [
+            '.zoemd',
+            '.zoemd.jpg' // 影片縮圖。
         ]
 
         if (this.name.startsWith('.')) {
             return true;
         }
 
-        return list.find(v => v === this.name);
+        if (endWiths.find(v => this.name.endsWith(v))) {
+            return true;
+        }
+
+        return equals.find(v => v === this.name);
     }
 }

@@ -2,6 +2,7 @@ import { FSEntry } from './fs_entry';
 import { Util } from './util';
 import fsex from 'fs-extra';
 import path from 'path';
+import { VideoFS } from './video_fs';
 
 /**
  *代表一個影片檔案，不含其他檔案資訊。
@@ -9,7 +10,8 @@ import path from 'path';
 export class VideoFile {
 
     constructor(
-        private entry: FSEntry
+        /** 代表影片檔案的檔案資訊。 */
+        public entry: FSEntry
     ) { }
 
     /**

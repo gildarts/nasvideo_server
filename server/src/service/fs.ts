@@ -30,12 +30,14 @@ export class FS {
         };
     }
 
-    public static async exists(ctx: ServiceContext) {
+    public static async video(ctx: ServiceContext) {
+        const vod = `/Volumes/video/tvmv/4k_video/8k_181006 (HELLOVENUS), (NARA)(FANCAM).mkv`;
+
         ctx.body = {};
     }
 }
 
 export default new Router()
     .get('/fs/list', FS.list)
-    .get('/fs/exists', FS.exists)
+    .get('/fs/video', FS.video)
     ;
