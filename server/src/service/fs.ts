@@ -45,9 +45,21 @@ export class FS {
         ctx.body = metadata;
     }
 
+    public static async screenshot(ctx: ServiceContext) {
+        const vfs = new VideoFS('/');
+        const vod = await VideoFile.fromFile(vfs, `/Users/yaoming/opt/4kf.mp4`);
+
+        const ffmpeg = new FFMpeg(vod.absolutePath);
+
+        const success = await ffmpeg.takeScreenshot(10);
+        ctx.body = {
+            status: success
+        };
+    }
 }
 
 export default new Router()
     .get('/fs/list', FS.list)
     .get('/fs/metadata', FS.metadata)
+    .get('/fs/screenshot', FS.screenshot)
     ;

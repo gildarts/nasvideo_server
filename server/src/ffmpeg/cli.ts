@@ -57,8 +57,10 @@ export class FFProbeCLI extends CLI {
 
         let part: string = null;
         while(!!(part = parts.shift())) {
+            // 「/」開頭的就是路徑。
             if (part.startsWith('/')) { break; }
 
+            // 也有可能有「"/」開頭，最後要把前後「"」去掉。
             if(part.startsWith('"/')) {
                 part = part.substr(1, part.length - 2);
                 break;
@@ -67,5 +69,26 @@ export class FFProbeCLI extends CLI {
 
         return FSUtil.pathSplite(part).path;
     }
+}
 
+export class FFMpegCLI extends CLI {
+
+    public getCWD(): string {
+        // 算出工作目錄。
+        // return '/Users/yaoming/opt';
+
+        const parts = this.command.split(' ');
+
+        let part: string = null;
+        while(!!(part = parts.shift())) {
+
+            // 「-i」開頭的下一個就是路徑。
+            if (part.trim() !== '-i') { continue; }
+
+            part = parts.shift();
+            break;
+        }
+
+        return FSUtil.pathSplite(part).path;
+    }
 }
