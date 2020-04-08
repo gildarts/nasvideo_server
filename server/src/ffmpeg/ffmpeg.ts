@@ -1,5 +1,6 @@
 import { TimeUtil } from './time_util';
 import { FFProbeCLI, FFMpegCLI } from './cli';
+import { FSUtil } from '../common/fs_util';
 
 /** 可處理影片相關事務。 */
 export class FFMpeg {
@@ -31,17 +32,24 @@ export class FFMpeg {
         }
     }
 
-    public async takeScreenshot(seconds: number) {
-        const cmd = `ffmpeg -ss ${seconds} -i "${this.absolutePath}" -r 1 -vframes 1 out%05d.jpg`
+    public async takeScreenshot(...seconds: number[]) {
 
-        const cli = new FFMpegCLI(cmd);
+        const fn = FSUtil.pathSplite(this.absolutePath).file;
 
-        const result = await cli.execute();
+        let count = 0;
+        for(const second of seconds) {
+            const post = (count++).toString().padStart(3, '0');
+            const cmd = `ffmpeg -ss ${second} -i "${this.absolutePath}" -r 1 -vframes 1 -y ${fn}_${post}.jpg`
 
-        if(result.code === 0) {
-            return true;
-        } else {
-            throw new Error('執行 ffprobe 失敗。');
+            const cli = new FFMpegCLI(cmd);
+    
+            const result = await cli.execute();
+    
+            if(result.code !== 0) {
+                throw new Error('執行 ffprobe 失敗。');
+            }
         }
+
+        return true;
     }
 }

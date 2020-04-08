@@ -51,7 +51,7 @@ export class FS {
 
         const ffmpeg = new FFMpeg(vod.absolutePath);
 
-        const success = await ffmpeg.takeScreenshot(10);
+        const success = await ffmpeg.takeScreenshot(100, 120, 140);
         ctx.body = {
             status: success
         };

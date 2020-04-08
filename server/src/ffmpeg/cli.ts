@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import { FSUtil } from '../common/fs_util';
+import { pathExists } from 'fs-extra';
 
 export interface CLIResult {
     code: number;
@@ -86,6 +87,11 @@ export class FFMpegCLI extends CLI {
             if (part.trim() !== '-i') { continue; }
 
             part = parts.shift();
+
+            if (part.startsWith("\"") && part.endsWith("\"")) {
+                part = part.substr(1, part.length - 2);
+            }
+
             break;
         }
 
