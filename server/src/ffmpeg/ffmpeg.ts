@@ -1,6 +1,7 @@
 import { TimeUtil } from './time_util';
 import { FFProbeCLI, FFMpegCLI } from './cli';
 import { FSUtil } from '../common/fs_util';
+import path from 'path';
 
 /** 可處理影片相關事務。 */
 export class FFMpeg {
@@ -34,7 +35,7 @@ export class FFMpeg {
 
     public async takeScreenshot(...seconds: number[]) {
 
-        const fn = FSUtil.pathSplite(this.absolutePath).file;
+        let fn = FSUtil.pathSplite(this.absolutePath).base;
 
         let count = 0;
         for(const second of seconds) {

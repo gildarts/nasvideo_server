@@ -46,8 +46,10 @@ export class FS {
     }
 
     public static async screenshot(ctx: ServiceContext) {
+        // const v = `/Volumes/video/movie/(移動迷宮)Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT/Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT.mkv`;
+        const v = `/Users/yaoming/opt/4k9.mp4`;
         const vfs = new VideoFS('/');
-        const vod = await VideoFile.fromFile(vfs, `/Users/yaoming/opt/4kf.mp4`);
+        const vod = await VideoFile.fromFile(vfs, v);
 
         const ffmpeg = new FFMpeg(vod.absolutePath);
 
