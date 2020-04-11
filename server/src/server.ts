@@ -2,6 +2,7 @@ import http from 'http';
 import Koa from 'koa';
 import serve from 'koa-static';
 import send from 'koa-send';
+import xsend from 'send';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser'
 import createSession from './common/session_store';
@@ -12,6 +13,18 @@ const PORT = process.env.PORT || 3000;
 
 async function main(app: Koa) {
     app.keys = ['1234'];
+
+    app.use((ctx, next) => {
+
+        if(ctx.request.path.startsWith('/media')) {
+            xsend(ctx.request.req, './public/media/snh48.mp4', {
+                acceptRanges: true
+            }).pipe(ctx.response.res);
+        } else {
+            return next();
+        }
+
+    });
 
     // 靜態檔案。
     app.use(serve("./public"));
@@ -37,7 +50,18 @@ async function main(app: Koa) {
         await send(ctx, "./public/index.html"); // html5 mode
     });
 
-    const server = http.createServer(app.callback()).listen(PORT);
+    const callback = app.callback();
+    const server = http.createServer((req, rsp) => {
+        if(req.url.startsWith('/media')) {
+            xsend(req, `./public${req.url}`, {
+                acceptRanges: true
+            }).pipe(rsp);
+        } else {
+            callback(req, rsp);
+        }
+
+    }).listen(PORT);
+
     (app as any).server = server;
 
     console.log('complete');
