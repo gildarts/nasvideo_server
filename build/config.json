@@ -1,0 +1,19 @@
+{
+    "db": {
+        "host": "speedfusiondb",
+        "database": "underground",
+        "user": "videouser",
+        "password": "videouser",
+        "port": 5433
+    },
+    "video_roots": [
+        {
+            "name": "default_",
+            "path": "/Volumes/video"
+        },
+        {
+            "name": "default",
+            "path": "/video"
+        }
+    ]
+}

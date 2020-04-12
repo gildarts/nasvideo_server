@@ -8,9 +8,11 @@ RUN adduser -D -u 1000 node \
 
 RUN npm install pm2 -g
 
-COPY ./dist /opt/nasvideo
+COPY ./dist/package.json /opt/nasvideo/package.json
 WORKDIR /opt/nasvideo
 RUN npm install
+
+COPY ./dist /opt/nasvideo
 
 # /Volumes/video
 
