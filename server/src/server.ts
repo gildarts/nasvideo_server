@@ -2,12 +2,14 @@ import http from 'http';
 import Koa from 'koa';
 import serve from 'koa-static';
 import send from 'koa-send';
-import xsend from 'send';
+import partialSend from 'send';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser'
 import createSession from './common/session_store';
 import { setupDBConnection, checkSessionData, setXFrameOptionsDENY, setVideoRoot } from './common/middlewares';
 import allservice from './service';
+import { getVideoRoot } from './config';
+import * as qs from 'query-string';
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,7 +19,7 @@ async function main(app: Koa) {
     app.use((ctx, next) => {
 
         if(ctx.request.path.startsWith('/media')) {
-            xsend(ctx.request.req, './public/media/snh48.mp4', {
+            partialSend(ctx.request.req, './public/media/snh48.mp4', {
                 acceptRanges: true
             }).pipe(ctx.response.res);
         } else {
@@ -50,21 +52,30 @@ async function main(app: Koa) {
         await send(ctx, "./public/index.html"); // html5 mode
     });
 
-    const callback = app.callback();
-    const server = http.createServer((req, rsp) => {
-        if(req.url.startsWith('/media')) {
-            xsend(req, `./public${req.url}`, {
-                acceptRanges: true
-            }).pipe(rsp);
-        } else {
-            callback(req, rsp);
-        }
-
-    }).listen(PORT);
+    const callback = wrapCallback(app.callback());
+    const server = http.createServer(callback).listen(PORT);
 
     (app as any).server = server;
 
     console.log('complete');
+}
+
+const wrapCallback = function(cb: http.RequestListener) {
+    return (req: http.IncomingMessage, rsp: http.ServerResponse) => {
+        const query = qs.parseUrl(req.url);
+        const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
+        const src: string = query.query.src as string;
+
+        if(aUrl.startsWith('path:/media')) {
+            const rpath = aUrl.replace('path:/media', '');
+            const root = getVideoRoot(src);
+            partialSend(req,  `${root}${rpath}`, {
+                acceptRanges: true
+            }).pipe(rsp);
+        } else {
+            cb(req, rsp);
+        }
+    }
 }
 
 main(new Koa());
