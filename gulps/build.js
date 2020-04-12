@@ -55,7 +55,7 @@ exports.deploy = series(
                         port: 5432
                     }
                 }))
-            .pipe(rename('config.json.template'))
+            // .pipe(rename('config.json.template'))
             .pipe(dest('./docker/dist'))
     }
 )
