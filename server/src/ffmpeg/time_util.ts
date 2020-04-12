@@ -18,6 +18,9 @@ export class TimeUtil {
                 duration = TimeUtil.asSeconds(stream.duration);
                 break;
             } else {
+                
+                if (!stream.tags) { break; } //沒有 tags 屬性。
+
                 for(const tagName of Object.getOwnPropertyNames(stream.tags)) {
                     const tagValue = stream.tags[tagName];
                     duration = TimeUtil.asSeconds(tagValue);

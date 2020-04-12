@@ -31,13 +31,11 @@ export class FS {
     }
 
     public static async metadata(ctx: ServiceContext) {
-        // const vod = `/Volumes/video/movie/(英倫對決)The.Foreigner.2017.1080p.BluRay.x264/Movie/The.Foreigner.2017.1080p.BluRay.x264.mkv`
-        // const vod = `/Volumes/video/movie/雷霆沙赞.Shazam.2019.HD720P.x264.英语中文字幕.Eng.CHS.Korean.aac2.0.btzimu/雷霆沙赞.Shazam.2019.HD720P.x264.英语中文字幕.Eng.CHS.Korean.aac2.0.btzimu.mp4`;
-        // const vod = `/Volumes/video/movie/(移動迷宮)Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT/Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT.mkv`;
-        // const vod = `/Volumes/video/movie/(氣象戰)Geostorm.2017.1080p.WEB-DL.X264.AC3-EVO/Geostorm.2017.1080p.WEB-DL.X264.AC3-EVO.mkv`;
+        const { videoRoot } = ctx;
+        const { video } = ctx.query;
 
-        const vfs = new VideoFS('/');
-        const vod = await VideoFile.fromFile(vfs, `/Users/yaoming/opt/4kf.mp4`);
+        const vfs = new VideoFS(videoRoot);
+        const vod = await VideoFile.fromFile(vfs, video);
 
         const ffmpeg = new FFMpeg(vod.absolutePath);
 
@@ -46,14 +44,16 @@ export class FS {
     }
 
     public static async screenshot(ctx: ServiceContext) {
-        // const v = `/Volumes/video/movie/(移動迷宮)Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT/Maze.Runner.The.Death.Cure.2017.1080p.WEB-DL.DD5.1.H264-FGT.mkv`;
-        const v = `/Users/yaoming/opt/4k9.mp4`;
-        const vfs = new VideoFS('/');
+        const { videoRoot } = ctx;
+        const { video, seconds } = ctx.query;
+
+        const v = video;
+        const vfs = new VideoFS(videoRoot);
         const vod = await VideoFile.fromFile(vfs, v);
 
         const ffmpeg = new FFMpeg(vod.absolutePath);
 
-        const success = await ffmpeg.takeScreenshot(100, 120, 140);
+        const success = await ffmpeg.takeScreenshot(seconds);
         ctx.body = {
             status: success
         };
