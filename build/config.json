@@ -8,11 +8,11 @@
     },
     "video_roots": [
         {
-            "name": "default_",
+            "name": "default",
             "path": "/Volumes/video"
         },
         {
-            "name": "default",
+            "name": "zoe",
             "path": "/video"
         }
     ]
