@@ -2,13 +2,13 @@
 docker container exec -it abdb1b46a02d /bin/ash
 
 # 打包一個 Docker
-docker build -t gildarts/ffmpegnode:0.0.10 .
+docker build -t gildarts/ffmpegnode:0.0.11 .
 
 # 裝 curl
 apk --no-cache add curl
 
 # 發佈 docker image
-docker push gildarts/ffmpegnode:0.0.10
+docker push gildarts/ffmpegnode:0.0.11
 
 # synology NAS DB Password
 2a5678

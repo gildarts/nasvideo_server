@@ -434,7 +434,16 @@ var FFMpegCLI = /** @class */ (function (_super) {
             if (part.trim() !== '-i') {
                 continue;
             }
-            part = parts.shift();
+            var pathPart = [];
+            var p = null;
+            while (parts.length >= 0) {
+                p = parts.shift();
+                pathPart.push(p);
+                if (p.endsWith("\"")) {
+                    break;
+                }
+            }
+            part = pathPart.join(" ");
             if (part.startsWith("\"") && part.endsWith("\"")) {
                 part = part.substr(1, part.length - 2);
             }
@@ -521,7 +530,7 @@ var FFMpeg = /** @class */ (function () {
                         if (!!seconds_1_1.done) return [3 /*break*/, 5];
                         second = seconds_1_1.value;
                         post = (count++).toString().padStart(3, '0');
-                        cmd = "ffmpeg -ss " + second + " -i \"" + this.absolutePath + "\" -r 1 -vframes 1 -y " + fn + "_" + post + ".jpg";
+                        cmd = "ffmpeg -ss " + second + " -i \"" + this.absolutePath + "\" -r 1 -vframes 1 -y \"" + fn + "_" + post + ".jpg\"";
                         cli = new cli_1.FFMpegCLI(cmd);
                         return [4 /*yield*/, cli.execute()];
                     case 3:
@@ -809,7 +818,6 @@ var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */
 var database_1 = __webpack_require__(/*! ../common/database */ "./src/common/database.ts");
 var video_fs_1 = __webpack_require__(/*! ../videofs/video_fs */ "./src/videofs/video_fs.ts");
 var video_file_1 = __webpack_require__(/*! ../videofs/video_file */ "./src/videofs/video_file.ts");
-var ffmpeg_1 = __webpack_require__(/*! ../ffmpeg */ "./src/ffmpeg/index.ts");
 var db = database_1.db.default;
 var FS = /** @class */ (function () {
     function FS() {
@@ -844,60 +852,11 @@ var FS = /** @class */ (function () {
             });
         });
     };
-    FS.metadata = function (ctx) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var videoRoot, video, vfs, vod, ffmpeg, metadata;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        videoRoot = ctx.videoRoot;
-                        video = ctx.query.video;
-                        vfs = new video_fs_1.VideoFS(videoRoot);
-                        return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, video)];
-                    case 1:
-                        vod = _a.sent();
-                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath);
-                        return [4 /*yield*/, ffmpeg.getMetadata()];
-                    case 2:
-                        metadata = _a.sent();
-                        ctx.body = metadata;
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    FS.screenshot = function (ctx) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var videoRoot, _a, video, seconds, v, vfs, vod, ffmpeg, success;
-            return tslib_1.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        videoRoot = ctx.videoRoot;
-                        _a = ctx.query, video = _a.video, seconds = _a.seconds;
-                        v = video;
-                        vfs = new video_fs_1.VideoFS(videoRoot);
-                        return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, v)];
-                    case 1:
-                        vod = _b.sent();
-                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath);
-                        return [4 /*yield*/, ffmpeg.takeScreenshot(seconds)];
-                    case 2:
-                        success = _b.sent();
-                        ctx.body = {
-                            status: success
-                        };
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     return FS;
 }());
 exports.FS = FS;
 exports.default = new koa_router_1.default()
-    .get('/fs/list', FS.list)
-    .get('/fs/metadata', FS.metadata)
-    .get('/fs/screenshot', FS.screenshot);
+    .get('/fs/list', FS.list);
 
 
 /***/ }),
@@ -937,13 +896,65 @@ exports.default = new koa_router_1.default()
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */ "koa-router"));
+var video_fs_1 = __webpack_require__(/*! ../videofs/video_fs */ "./src/videofs/video_fs.ts");
+var video_file_1 = __webpack_require__(/*! ../videofs/video_file */ "./src/videofs/video_file.ts");
+var ffmpeg_1 = __webpack_require__(/*! ../ffmpeg */ "./src/ffmpeg/index.ts");
 var Video = /** @class */ (function () {
     function Video() {
     }
+    Video.metadata = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var videoRoot, video, vfs, vod, ffmpeg, metadata;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        videoRoot = ctx.videoRoot;
+                        video = ctx.query.video;
+                        vfs = new video_fs_1.VideoFS(videoRoot);
+                        return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, video)];
+                    case 1:
+                        vod = _a.sent();
+                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath);
+                        return [4 /*yield*/, ffmpeg.getMetadata()];
+                    case 2:
+                        metadata = _a.sent();
+                        ctx.body = metadata;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Video.screenshot = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var videoRoot, _a, video, seconds, v, vfs, vod, ffmpeg, success;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        videoRoot = ctx.videoRoot;
+                        _a = ctx.query, video = _a.video, seconds = _a.seconds;
+                        v = video;
+                        vfs = new video_fs_1.VideoFS(videoRoot);
+                        return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, v)];
+                    case 1:
+                        vod = _b.sent();
+                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath);
+                        return [4 /*yield*/, ffmpeg.takeScreenshot(seconds)];
+                    case 2:
+                        success = _b.sent();
+                        ctx.body = {
+                            status: success
+                        };
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     return Video;
 }());
 exports.Video = Video;
-exports.default = new koa_router_1.default();
+exports.default = new koa_router_1.default()
+    .get('/video/metadata', Video.metadata)
+    .get('/video/screenshot', Video.screenshot);
 
 
 /***/ }),
