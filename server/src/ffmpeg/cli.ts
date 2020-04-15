@@ -1,6 +1,5 @@
 import { exec } from "child_process";
 import { FSUtil } from '../common/fs_util';
-import { pathExists } from 'fs-extra';
 
 export interface CLIResult {
     code: number;
@@ -86,7 +85,18 @@ export class FFMpegCLI extends CLI {
             // 「-i」開頭的下一個就是路徑。
             if (part.trim() !== '-i') { continue; }
 
-            part = parts.shift();
+            const pathPart = [];
+
+            let p: string = null;
+            while(parts.length >= 0) {
+                p = parts.shift()
+                pathPart.push(p);
+
+                if(p.endsWith("\"")) {
+                    break;
+                }
+            }
+            part = pathPart.join(" ");
 
             if (part.startsWith("\"") && part.endsWith("\"")) {
                 part = part.substr(1, part.length - 2);

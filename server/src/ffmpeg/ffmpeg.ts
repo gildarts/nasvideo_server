@@ -40,7 +40,7 @@ export class FFMpeg {
         let count = 0;
         for(const second of seconds) {
             const post = (count++).toString().padStart(3, '0');
-            const cmd = `ffmpeg -ss ${second} -i "${this.absolutePath}" -r 1 -vframes 1 -y ${fn}_${post}.jpg`
+            const cmd = `ffmpeg -ss ${second} -i "${this.absolutePath}" -r 1 -vframes 1 -y "${fn}_${post}.jpg"`
 
             const cli = new FFMpegCLI(cmd);
     
