@@ -1,10 +1,10 @@
 https://hub.docker.com/r/gildarts/ffmpegnode
 
 # 打包一個 Docker
-docker build -t gildarts/ffmpegnode:0.0.14 .
+docker build -t gildarts/ffmpegnode:0.0.15 .
 
 # 發佈 docker image
-docker push gildarts/ffmpegnode:0.0.14
+docker push gildarts/ffmpegnode:0.0.15
 
 # 裝 curl
 apk --no-cache add curl

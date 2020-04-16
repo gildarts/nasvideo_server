@@ -188,7 +188,7 @@ exports.checkSessionData = function (ctx, next) {
     }
 };
 exports.setVideoRoot = function (ctx, next) {
-    ctx.videoRoot = config_1.getVideoRoot(ctx);
+    ctx.videoRoot = config_1.getVideoRoot(ctx.session.video_src);
     return next();
 };
 
@@ -210,7 +210,7 @@ var database_1 = __webpack_require__(/*! ./database */ "./src/common/database.ts
 var moment_1 = tslib_1.__importDefault(__webpack_require__(/*! moment */ "moment"));
 var koa_session_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-session */ "koa-session"));
 var connection = database_1.db.default;
-var TableName = 'session_hlc';
+var TableName = 'session';
 var db_store = {
     get: function (key, maxAge, _a) {
         var rolling = _a.rolling;
@@ -332,9 +332,8 @@ exports.default = (function (app) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var conf = tslib_1.__importStar(__webpack_require__(/*! config */ "config"));
-exports.getVideoRoot = function (ctx) {
-    var _a;
-    var name = (typeof (ctx) === 'string') ? ctx : ((_a = ctx === null || ctx === void 0 ? void 0 : ctx.query) === null || _a === void 0 ? void 0 : _a.src) || 'default';
+exports.getVideoRoot = function (srcName) {
+    var name = srcName || 'default';
     var found = conf.video_roots.find(function (v) { return v.name === name; });
     if (found) {
         return found.path;
@@ -698,16 +697,6 @@ function main(app) {
         var _this = this;
         return tslib_1.__generator(this, function (_a) {
             app.keys = ['1234'];
-            app.use(function (ctx, next) {
-                if (ctx.request.path.startsWith('/media')) {
-                    send_1.default(ctx.request.req, './public/media/snh48.mp4', {
-                        acceptRanges: true
-                    }).pipe(ctx.response.res);
-                }
-                else {
-                    return next();
-                }
-            });
             // 靜態檔案。
             app.use(koa_static_1.default("./public"));
             app.use(koa_bodyparser_1.default());
@@ -780,17 +769,14 @@ var db = database_1.db.default;
 var ACL = /** @class */ (function () {
     function ACL() {
     }
-    ACL.savior = function (ctx) {
+    ACL.source = function (ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var records;
+            var src;
             return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, db.manyOrNone('select * from savior')];
-                    case 1:
-                        records = _a.sent();
-                        ctx.body = records;
-                        return [2 /*return*/];
-                }
+                src = ctx.query.src;
+                ctx.session.video_src = src;
+                ctx.redirect('/');
+                return [2 /*return*/];
             });
         });
     };
@@ -798,7 +784,7 @@ var ACL = /** @class */ (function () {
 }());
 exports.ACL = ACL;
 exports.default = new koa_router_1.default()
-    .get('/acl/savior', ACL.savior);
+    .get('/acl/source', ACL.source);
 
 
 /***/ }),
@@ -873,13 +859,13 @@ exports.default = new koa_router_1.default()
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */ "koa-router"));
-var acl_1 = tslib_1.__importDefault(__webpack_require__(/*! ./acl */ "./src/service/acl.ts"));
 var fs_1 = tslib_1.__importDefault(__webpack_require__(/*! ./fs */ "./src/service/fs.ts"));
 var video_1 = tslib_1.__importDefault(__webpack_require__(/*! ./video */ "./src/service/video.ts"));
+var acl_1 = tslib_1.__importDefault(__webpack_require__(/*! ./acl */ "./src/service/acl.ts"));
 exports.default = new koa_router_1.default()
-    .use(acl_1.default.routes())
     .use(fs_1.default.routes())
-    .use(video_1.default.routes());
+    .use(video_1.default.routes())
+    .use(acl_1.default.routes());
 
 
 /***/ }),
