@@ -8,6 +8,7 @@ export class ACL {
     public static async source(ctx: ServiceContext) {
         const { src } = ctx.query;
 
+        await db.none('update library set "name"=$(src) where id = 1', {src});
         ctx.session.video_src = src;
 
         ctx.redirect('/');

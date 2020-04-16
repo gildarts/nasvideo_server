@@ -10,6 +10,8 @@ import { setupDBConnection, checkSessionData, setXFrameOptionsDENY, setVideoRoot
 import allservice from './service';
 import { getVideoRoot } from './config';
 import * as qs from 'query-string';
+import { db as connections } from './common/database';
+const db = connections.default;
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,7 +26,6 @@ async function main(app: Koa) {
     app.use(createSession(app));
     app.use(checkSessionData);
     app.use(setVideoRoot);
-
 
     // 所有 server side 程式都由 /service 路徑開始。
     const general = new Router();
@@ -49,14 +50,14 @@ async function main(app: Koa) {
 }
 
 const wrapCallback = function(cb: http.RequestListener) {
-    return (req: http.IncomingMessage, rsp: http.ServerResponse) => {
+    return async (req: http.IncomingMessage, rsp: http.ServerResponse) => {
         const query = qs.parseUrl(req.url);
         const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
-        const src: string = query.query.src as string;
+        const srcRecord = await db.one('select name from library where id = 1');
 
         if(aUrl.startsWith('path:/media')) {
             const rpath = aUrl.replace('path:/media', '');
-            const root = getVideoRoot(src);
+            const root = getVideoRoot(srcRecord.name);
             partialSend(req,  `${root}${rpath}`, {
                 acceptRanges: true
             }).pipe(rsp);
