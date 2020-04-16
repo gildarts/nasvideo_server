@@ -16,18 +16,6 @@ const PORT = process.env.PORT || 3000;
 async function main(app: Koa) {
     app.keys = ['1234'];
 
-    app.use((ctx, next) => {
-
-        if(ctx.request.path.startsWith('/media')) {
-            partialSend(ctx.request.req, './public/media/snh48.mp4', {
-                acceptRanges: true
-            }).pipe(ctx.response.res);
-        } else {
-            return next();
-        }
-
-    });
-
     // 靜態檔案。
     app.use(serve("./public"));
 

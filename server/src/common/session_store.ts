@@ -4,7 +4,7 @@ import KoaSession from 'koa-session';
 import Koa from 'koa';
 
 const connection = db.default;
-const TableName = 'session_hlc';
+const TableName = 'session';
 
 const db_store = {
     get: async (key: string, maxAge: number, { rolling }: { rolling: any }) => {

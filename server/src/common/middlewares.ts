@@ -25,7 +25,7 @@ export const checkSessionData = (ctx: ServiceContext, next: () => Promise<void>)
     }
 }
 
-export const setVideoRoot = (ctx: ServiceContext, next: () => Promise<void>) => {
-    ctx.videoRoot = getVideoRoot(ctx);
+export const setVideoRoot = (ctx: ServiceContext, next: () => Promise<void>) => {   
+    ctx.videoRoot = getVideoRoot(ctx.session.video_src);
     return next();
 };
