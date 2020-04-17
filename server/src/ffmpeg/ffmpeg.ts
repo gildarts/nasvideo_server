@@ -12,7 +12,8 @@ export class FFMpeg {
      * @memberof FFMpeg
      */
     constructor(
-        private absolutePath: string
+        private absolutePath: string,
+        private cwd = path.dirname(absolutePath)
     ) { }
 
     /**
@@ -21,7 +22,7 @@ export class FFMpeg {
     public async getMetadata() {
         const cmd = `ffprobe "${this.absolutePath}" -show_entries stream=duration,width,height,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet`;
 
-        const cli = new FFProbeCLI(cmd);
+        const cli = new FFProbeCLI(cmd, this.cwd);
 
         const result = await cli.execute();
 
@@ -41,7 +42,7 @@ export class FFMpeg {
             const post = (each.index).toString().padStart(3, '0');
             const cmd = `ffmpeg -ss ${each.second} -i "${this.absolutePath}" -r 1 -vframes 1 -y "${fn}_${post}.jpg"`
 
-            const cli = new FFMpegCLI(cmd);
+            const cli = new FFMpegCLI(cmd, this.cwd);
     
             const result = await cli.execute();
     

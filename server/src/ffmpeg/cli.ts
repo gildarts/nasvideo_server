@@ -10,13 +10,15 @@ export interface CLIResult {
 export abstract class CLI {
 
     constructor(
-        protected command: string
+        protected command: string,
+        private cwd?: string
     ) { }
 
     public execute() {
         const { command: cmd } = this;
 
-        const p = exec(cmd, {cwd: this.getCWD()});
+        const cwd = this.cwd;
+        const p = exec(cmd, {cwd});
 
         return new Promise<CLIResult>((r, j) => {
             let lines: string[] = [], error = null;
@@ -44,67 +46,10 @@ export abstract class CLI {
             });
         });
     }
-
-    /** 取得工作目錄。 */
-    public abstract getCWD(): string;
 }
 
 export class FFProbeCLI extends CLI {
-
-    public getCWD(): string {
-        
-        const parts = this.command.split(' ');
-
-        let part: string = null;
-        while(!!(part = parts.shift())) {
-            // 「/」開頭的就是路徑。
-            if (part.startsWith('/')) { break; }
-
-            // 也有可能有「"/」開頭，最後要把前後「"」去掉。
-            if(part.startsWith('"/')) {
-                part = part.substr(1, part.length - 2);
-                break;
-            }
-        }
-
-        return FSUtil.pathSplite(part).path;
-    }
 }
 
 export class FFMpegCLI extends CLI {
-
-    public getCWD(): string {
-        // 算出工作目錄。
-        // return '/Users/yaoming/opt';
-
-        const parts = this.command.split(' ');
-
-        let part: string = null;
-        while(!!(part = parts.shift())) {
-
-            // 「-i」開頭的下一個就是路徑。
-            if (part.trim() !== '-i') { continue; }
-
-            const pathPart = [];
-
-            let p: string = null;
-            while(parts.length >= 0) {
-                p = parts.shift()
-                pathPart.push(p);
-
-                if(p.endsWith("\"")) {
-                    break;
-                }
-            }
-            part = pathPart.join(" ");
-
-            if (part.startsWith("\"") && part.endsWith("\"")) {
-                part = part.substr(1, part.length - 2);
-            }
-
-            break;
-        }
-
-        return FSUtil.pathSplite(part).path;
-    }
 }
