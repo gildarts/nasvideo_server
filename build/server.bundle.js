@@ -690,6 +690,8 @@ var middlewares_1 = __webpack_require__(/*! ./common/middlewares */ "./src/commo
 var service_1 = tslib_1.__importDefault(__webpack_require__(/*! ./service */ "./src/service/index.ts"));
 var config_1 = __webpack_require__(/*! ./config */ "./src/config.ts");
 var qs = tslib_1.__importStar(__webpack_require__(/*! query-string */ "query-string"));
+var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/database.ts");
+var db = database_1.db.default;
 var PORT = process.env.PORT || 3000;
 function main(app) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
@@ -731,21 +733,31 @@ function main(app) {
     });
 }
 var wrapCallback = function (cb) {
-    return function (req, rsp) {
-        var query = qs.parseUrl(req.url);
-        var aUrl = "path:" + query.url; // 防止尋取代時不要出錯。
-        var src = query.query.src;
-        if (aUrl.startsWith('path:/media')) {
-            var rpath = aUrl.replace('path:/media', '');
-            var root = config_1.getVideoRoot(src);
-            send_1.default(req, "" + root + rpath, {
-                acceptRanges: true
-            }).pipe(rsp);
-        }
-        else {
-            cb(req, rsp);
-        }
-    };
+    var _this = this;
+    return function (req, rsp) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        var query, aUrl, srcRecord, rpath, root;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    query = qs.parseUrl(req.url);
+                    aUrl = "path:" + query.url;
+                    return [4 /*yield*/, db.one('select name from library where id = 1')];
+                case 1:
+                    srcRecord = _a.sent();
+                    if (aUrl.startsWith('path:/media')) {
+                        rpath = aUrl.replace('path:/media', '');
+                        root = config_1.getVideoRoot(srcRecord.name);
+                        send_1.default(req, "" + root + rpath, {
+                            acceptRanges: true
+                        }).pipe(rsp);
+                    }
+                    else {
+                        cb(req, rsp);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
 };
 main(new koa_1.default());
 
@@ -773,10 +785,16 @@ var ACL = /** @class */ (function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var src;
             return tslib_1.__generator(this, function (_a) {
-                src = ctx.query.src;
-                ctx.session.video_src = src;
-                ctx.redirect('/');
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        src = ctx.query.src;
+                        return [4 /*yield*/, db.none('update library set "name"=$(src) where id = 1', { src: src })];
+                    case 1:
+                        _a.sent();
+                        ctx.session.video_src = src;
+                        ctx.redirect('/');
+                        return [2 /*return*/];
+                }
             });
         });
     };
