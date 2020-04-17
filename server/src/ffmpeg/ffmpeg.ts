@@ -33,14 +33,13 @@ export class FFMpeg {
         }
     }
 
-    public async takeScreenshot(...seconds: number[]) {
+    public async takeScreenshot(seconds: { second: number, index: number }[]) {
 
         let fn = FSUtil.pathSplite(this.absolutePath).base;
 
-        let count = 0;
-        for(const second of seconds) {
-            const post = (count++).toString().padStart(3, '0');
-            const cmd = `ffmpeg -ss ${second} -i "${this.absolutePath}" -r 1 -vframes 1 -y "${fn}_${post}.jpg"`
+        for(const each of seconds) {
+            const post = (each.index).toString().padStart(3, '0');
+            const cmd = `ffmpeg -ss ${each.second} -i "${this.absolutePath}" -r 1 -vframes 1 -y "${fn}_${post}.jpg"`
 
             const cli = new FFMpegCLI(cmd);
     

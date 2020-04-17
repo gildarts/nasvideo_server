@@ -20,7 +20,7 @@ export class Video {
 
     public static async screenshot(ctx: ServiceContext) {
         const { videoRoot } = ctx;
-        const { video, seconds } = ctx.query;
+        const { video, seconds } = ctx.request.body;
 
         const v = video;
         const vfs = new VideoFS(videoRoot);
@@ -38,5 +38,5 @@ export class Video {
 
 export default new Router()
 .get('/video/metadata', Video.metadata)
-.get('/video/screenshot', Video.screenshot)
+.post('/video/screenshot', Video.screenshot)
 ;
