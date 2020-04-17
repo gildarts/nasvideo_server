@@ -53,11 +53,12 @@ const wrapCallback = function(cb: http.RequestListener) {
     return async (req: http.IncomingMessage, rsp: http.ServerResponse) => {
         const query = qs.parseUrl(req.url);
         const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
-        const srcRecord = await db.one('select name from library where id = 1');
+        const sid = getSessionId(req.headers.cookie);
+        const srcRecord = await db.oneOrNone('select data from session WHERE session_id like $(sid)', {sid}) || {data: {}};
 
         if(aUrl.startsWith('path:/media')) {
             const rpath = aUrl.replace('path:/media', '');
-            const root = getVideoRoot(srcRecord.name);
+            const root = getVideoRoot(srcRecord.data.video_src);
             partialSend(req,  `${root}${rpath}`, {
                 acceptRanges: true
             }).pipe(rsp);
@@ -65,6 +66,13 @@ const wrapCallback = function(cb: http.RequestListener) {
             cb(req, rsp);
         }
     }
+}
+
+const getSessionId = function(cookie: string) {
+    if (!!!cookie) { return ''; }
+
+    const pattern = /koa_nasvideo=([\w\d-]*);/;
+    return pattern.exec(cookie)[1];
 }
 
 main(new Koa());

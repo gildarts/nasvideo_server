@@ -51,7 +51,7 @@ const db_store = {
 };
 
 const session_conf = {
-    key: 'hlc_boe_web', /** (string) cookie key (default is koa:sess) */
+    key: 'koa_nasvideo', /** (string) cookie key (default is koa:sess) */
     maxAge: 24 * 60 * 60 * 1000 * 1000, // 用戶端 cookie 過期時間，多久沒使用 cookie 會失效。
     overwrite: true, /** (boolean) can overwrite or not (default true) */
     httpOnly: true, /** (boolean) httpOnly or not (default true) */
