@@ -167,6 +167,7 @@ exports.FSUtil = FSUtil;
 Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = __webpack_require__(/*! ./database */ "./src/common/database.ts");
 var config_1 = __webpack_require__(/*! ../config */ "./src/config.ts");
+var video_fs_1 = __webpack_require__(/*! ../videofs/video_fs */ "./src/videofs/video_fs.ts");
 exports.setXFrameOptionsDENY = function (ctx, next) {
     ctx.response.set({
         'X-Frame-Options': 'DENY',
@@ -189,6 +190,7 @@ exports.checkSessionData = function (ctx, next) {
 };
 exports.setVideoRoot = function (ctx, next) {
     ctx.videoRoot = config_1.getVideoRoot(ctx.session.video_src);
+    ctx.vfs = new video_fs_1.VideoFS(ctx.videoRoot);
     return next();
 };
 
@@ -294,7 +296,7 @@ var db_store = {
     }); }
 };
 var session_conf = {
-    key: 'hlc_boe_web',
+    key: 'koa_nasvideo',
     maxAge: 24 * 60 * 60 * 1000 * 1000,
     overwrite: true,
     httpOnly: true,
@@ -359,14 +361,15 @@ exports.default = conf;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var child_process_1 = __webpack_require__(/*! child_process */ "child_process");
-var fs_util_1 = __webpack_require__(/*! ../common/fs_util */ "./src/common/fs_util.ts");
 var CLI = /** @class */ (function () {
-    function CLI(command) {
+    function CLI(command, cwd) {
         this.command = command;
+        this.cwd = cwd;
     }
     CLI.prototype.execute = function () {
         var cmd = this.command;
-        var p = child_process_1.exec(cmd, { cwd: this.getCWD() });
+        var cwd = this.cwd;
+        var p = child_process_1.exec(cmd, { cwd: cwd });
         return new Promise(function (r, j) {
             var lines = [], error = null;
             p.stdout.on('data', function (chunk) {
@@ -399,22 +402,6 @@ var FFProbeCLI = /** @class */ (function (_super) {
     function FFProbeCLI() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    FFProbeCLI.prototype.getCWD = function () {
-        var parts = this.command.split(' ');
-        var part = null;
-        while (!!(part = parts.shift())) {
-            // 「/」開頭的就是路徑。
-            if (part.startsWith('/')) {
-                break;
-            }
-            // 也有可能有「"/」開頭，最後要把前後「"」去掉。
-            if (part.startsWith('"/')) {
-                part = part.substr(1, part.length - 2);
-                break;
-            }
-        }
-        return fs_util_1.FSUtil.pathSplite(part).path;
-    };
     return FFProbeCLI;
 }(CLI));
 exports.FFProbeCLI = FFProbeCLI;
@@ -423,33 +410,6 @@ var FFMpegCLI = /** @class */ (function (_super) {
     function FFMpegCLI() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    FFMpegCLI.prototype.getCWD = function () {
-        // 算出工作目錄。
-        // return '/Users/yaoming/opt';
-        var parts = this.command.split(' ');
-        var part = null;
-        while (!!(part = parts.shift())) {
-            // 「-i」開頭的下一個就是路徑。
-            if (part.trim() !== '-i') {
-                continue;
-            }
-            var pathPart = [];
-            var p = null;
-            while (parts.length >= 0) {
-                p = parts.shift();
-                pathPart.push(p);
-                if (p.endsWith("\"")) {
-                    break;
-                }
-            }
-            part = pathPart.join(" ");
-            if (part.startsWith("\"") && part.endsWith("\"")) {
-                part = part.substr(1, part.length - 2);
-            }
-            break;
-        }
-        return fs_util_1.FSUtil.pathSplite(part).path;
-    };
     return FFMpegCLI;
 }(CLI));
 exports.FFMpegCLI = FFMpegCLI;
@@ -471,6 +431,7 @@ var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var time_util_1 = __webpack_require__(/*! ./time_util */ "./src/ffmpeg/time_util.ts");
 var cli_1 = __webpack_require__(/*! ./cli */ "./src/ffmpeg/cli.ts");
 var fs_util_1 = __webpack_require__(/*! ../common/fs_util */ "./src/common/fs_util.ts");
+var path_1 = tslib_1.__importDefault(__webpack_require__(/*! path */ "path"));
 /** 可處理影片相關事務。 */
 var FFMpeg = /** @class */ (function () {
     /**
@@ -478,8 +439,10 @@ var FFMpeg = /** @class */ (function () {
      * @param {string} absolutePath 影片絕對路徑。
      * @memberof FFMpeg
      */
-    function FFMpeg(absolutePath) {
+    function FFMpeg(absolutePath, cwd) {
+        if (cwd === void 0) { cwd = path_1.default.dirname(absolutePath); }
         this.absolutePath = absolutePath;
+        this.cwd = cwd;
     }
     /**
      * 取得影片相關資訊。
@@ -490,8 +453,8 @@ var FFMpeg = /** @class */ (function () {
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cmd = "ffprobe \"" + this.absolutePath + "\" -show_entries stream=duration,width,height,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet";
-                        cli = new cli_1.FFProbeCLI(cmd);
+                        cmd = "ffprobe \"" + this.absolutePath + "\" -show_entries stream=duration,width,height,codec_name,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet";
+                        cli = new cli_1.FFProbeCLI(cmd, this.cwd);
                         return [4 /*yield*/, cli.execute()];
                     case 1:
                         result = _a.sent();
@@ -507,30 +470,29 @@ var FFMpeg = /** @class */ (function () {
             });
         });
     };
-    FFMpeg.prototype.takeScreenshot = function () {
-        var seconds = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            seconds[_i] = arguments[_i];
-        }
+    FFMpeg.prototype.takeScreenshot = function (secondsList) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var fn, count, seconds_1, seconds_1_1, second, post, cmd, cli, result, e_1_1;
+            var fn, secondsList_1, secondsList_1_1, each, fileName, post, cmd, cli, result, e_1_1;
             var e_1, _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         fn = fs_util_1.FSUtil.pathSplite(this.absolutePath).base;
-                        count = 0;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 6, 7, 8]);
-                        seconds_1 = tslib_1.__values(seconds), seconds_1_1 = seconds_1.next();
+                        secondsList_1 = tslib_1.__values(secondsList), secondsList_1_1 = secondsList_1.next();
                         _b.label = 2;
                     case 2:
-                        if (!!seconds_1_1.done) return [3 /*break*/, 5];
-                        second = seconds_1_1.value;
-                        post = (count++).toString().padStart(3, '0');
-                        cmd = "ffmpeg -ss " + second + " -i \"" + this.absolutePath + "\" -r 1 -vframes 1 -y \"" + fn + "_" + post + ".jpg\"";
-                        cli = new cli_1.FFMpegCLI(cmd);
+                        if (!!secondsList_1_1.done) return [3 /*break*/, 5];
+                        each = secondsList_1_1.value;
+                        fileName = each.name;
+                        if (!each.name) {
+                            post = (each.index).toString().padStart(3, '0');
+                            fileName = fn + "_" + post;
+                        }
+                        cmd = "ffmpeg -ss " + each.seconds + " -i \"" + this.absolutePath + "\" -r 1 -vframes 1 -vf scale=640:-1 -y \"" + fileName + ".jpg\"";
+                        cli = new cli_1.FFMpegCLI(cmd, this.cwd);
                         return [4 /*yield*/, cli.execute()];
                     case 3:
                         result = _b.sent();
@@ -539,7 +501,7 @@ var FFMpeg = /** @class */ (function () {
                         }
                         _b.label = 4;
                     case 4:
-                        seconds_1_1 = seconds_1.next();
+                        secondsList_1_1 = secondsList_1.next();
                         return [3 /*break*/, 2];
                     case 5: return [3 /*break*/, 8];
                     case 6:
@@ -548,7 +510,7 @@ var FFMpeg = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 7:
                         try {
-                            if (seconds_1_1 && !seconds_1_1.done && (_a = seconds_1.return)) _a.call(seconds_1);
+                            if (secondsList_1_1 && !secondsList_1_1.done && (_a = secondsList_1.return)) _a.call(secondsList_1);
                         }
                         finally { if (e_1) throw e_1.error; }
                         return [7 /*endfinally*/];
@@ -644,6 +606,8 @@ var TimeUtil = /** @class */ (function () {
             duration: duration,
             width: +foundStream.width,
             height: +foundStream.height,
+            codec_name: foundStream.codec_name,
+            codec_type: foundStream.codec_type,
             origin: vd
         };
     };
@@ -667,6 +631,74 @@ exports.TimeUtil = TimeUtil;
 
 /***/ }),
 
+/***/ "./src/media_server.ts":
+/*!*****************************!*\
+  !*** ./src/media_server.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+var fs_extra_1 = tslib_1.__importDefault(__webpack_require__(/*! fs-extra */ "fs-extra"));
+var path_1 = tslib_1.__importDefault(__webpack_require__(/*! path */ "path"));
+var send_1 = tslib_1.__importDefault(__webpack_require__(/*! send */ "send"));
+var config_1 = __webpack_require__(/*! ./config */ "./src/config.ts");
+var qs = tslib_1.__importStar(__webpack_require__(/*! query-string */ "query-string"));
+var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/database.ts");
+var db = database_1.db.default;
+exports.wrapCallback = function (cb) {
+    var _this = this;
+    return function (req, rsp) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        var query, aUrl, sid, srcRecord, rpath, root, fullpath;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    query = qs.parseUrl(req.url);
+                    aUrl = "path:" + query.url;
+                    sid = getSessionId(req.headers.cookie);
+                    return [4 /*yield*/, db.oneOrNone('select data from session WHERE session_id like $(sid)', { sid: sid })];
+                case 1:
+                    srcRecord = (_a.sent()) || { data: {} };
+                    if (!aUrl.startsWith('path:/media')) return [3 /*break*/, 3];
+                    rpath = aUrl.replace('path:/media', '');
+                    root = config_1.getVideoRoot(srcRecord.data.video_src);
+                    fullpath = path_1.default.join(root, rpath);
+                    return [4 /*yield*/, fs_extra_1.default.pathExists(fullpath)];
+                case 2:
+                    if (!(_a.sent()) && query.query.default === 'jpg') {
+                        send_1.default(req, path_1.default.join(root, 'default.jpg')).pipe(rsp);
+                    }
+                    else {
+                        send_1.default(req, fullpath, {
+                            acceptRanges: true
+                        }).pipe(rsp);
+                    }
+                    return [3 /*break*/, 4];
+                case 3:
+                    cb(req, rsp);
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); };
+};
+var getSessionId = function (cookie) {
+    if (!!!cookie) {
+        return '';
+    }
+    if (cookie.indexOf('koa_nasvideo') < 0) {
+        return '';
+    }
+    var pattern = /koa_nasvideo=([\w\d-]*);/;
+    return pattern.exec(cookie)[1];
+};
+
+
+/***/ }),
+
 /***/ "./src/server.ts":
 /*!***********************!*\
   !*** ./src/server.ts ***!
@@ -682,15 +714,13 @@ var http_1 = tslib_1.__importDefault(__webpack_require__(/*! http */ "http"));
 var koa_1 = tslib_1.__importDefault(__webpack_require__(/*! koa */ "koa"));
 var koa_static_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-static */ "koa-static"));
 var koa_send_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-send */ "koa-send"));
-var send_1 = tslib_1.__importDefault(__webpack_require__(/*! send */ "send"));
 var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */ "koa-router"));
 var koa_bodyparser_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-bodyparser */ "koa-bodyparser"));
 var session_store_1 = tslib_1.__importDefault(__webpack_require__(/*! ./common/session_store */ "./src/common/session_store.ts"));
 var middlewares_1 = __webpack_require__(/*! ./common/middlewares */ "./src/common/middlewares.ts");
 var service_1 = tslib_1.__importDefault(__webpack_require__(/*! ./service */ "./src/service/index.ts"));
-var config_1 = __webpack_require__(/*! ./config */ "./src/config.ts");
-var qs = tslib_1.__importStar(__webpack_require__(/*! query-string */ "query-string"));
 var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/database.ts");
+var media_server_1 = __webpack_require__(/*! ./media_server */ "./src/media_server.ts");
 var db = database_1.db.default;
 var PORT = process.env.PORT || 3000;
 function main(app) {
@@ -724,7 +754,7 @@ function main(app) {
                     }
                 });
             }); });
-            callback = wrapCallback(app.callback());
+            callback = media_server_1.wrapCallback(app.callback());
             server = http_1.default.createServer(callback).listen(PORT);
             app.server = server;
             console.log('complete');
@@ -732,33 +762,6 @@ function main(app) {
         });
     });
 }
-var wrapCallback = function (cb) {
-    var _this = this;
-    return function (req, rsp) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-        var query, aUrl, srcRecord, rpath, root;
-        return tslib_1.__generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    query = qs.parseUrl(req.url);
-                    aUrl = "path:" + query.url;
-                    return [4 /*yield*/, db.one('select name from library where id = 1')];
-                case 1:
-                    srcRecord = _a.sent();
-                    if (aUrl.startsWith('path:/media')) {
-                        rpath = aUrl.replace('path:/media', '');
-                        root = config_1.getVideoRoot(srcRecord.name);
-                        send_1.default(req, "" + root + rpath, {
-                            acceptRanges: true
-                        }).pipe(rsp);
-                    }
-                    else {
-                        cb(req, rsp);
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    }); };
-};
 main(new koa_1.default());
 
 
@@ -785,16 +788,10 @@ var ACL = /** @class */ (function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var src;
             return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        src = ctx.query.src;
-                        return [4 /*yield*/, db.none('update library set "name"=$(src) where id = 1', { src: src })];
-                    case 1:
-                        _a.sent();
-                        ctx.session.video_src = src;
-                        ctx.redirect('/');
-                        return [2 /*return*/];
-                }
+                src = ctx.query.src;
+                ctx.session.video_src = src;
+                ctx.body = "\n        <html>\n            <body><a href=\"/\">" + (src || 'default') + "</a></body>\n        </html>\n        ";
+                return [2 /*return*/];
             });
         });
     };
@@ -841,13 +838,16 @@ var FS = /** @class */ (function () {
                         ctx.body = {
                             videos: pathInfoList
                                 .map(function (v) {
+                                var video = new video_file_1.VideoFile(vr, v);
                                 return {
                                     name: v.name,
                                     path: v.getPath(),
                                     size: v.isDir ? 0 : v.size,
                                     isFile: v.isFile,
-                                    format: new video_file_1.VideoFile(vr, v).format,
-                                    isVideo: video_file_1.VideoFile.isVideo(v)
+                                    format: video.format,
+                                    isVideo: video_file_1.VideoFile.isVideo(v),
+                                    containsZoemd: video_file_1.VideoFile.isVideo(v) ? video.containsZoemd() : false,
+                                    create_time: v.createTime,
                                 };
                             })
                         };
@@ -880,10 +880,12 @@ var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */
 var fs_1 = tslib_1.__importDefault(__webpack_require__(/*! ./fs */ "./src/service/fs.ts"));
 var video_1 = tslib_1.__importDefault(__webpack_require__(/*! ./video */ "./src/service/video.ts"));
 var acl_1 = tslib_1.__importDefault(__webpack_require__(/*! ./acl */ "./src/service/acl.ts"));
+var zoemd_1 = tslib_1.__importDefault(__webpack_require__(/*! ./zoemd */ "./src/service/zoemd.ts"));
 exports.default = new koa_router_1.default()
     .use(fs_1.default.routes())
     .use(video_1.default.routes())
-    .use(acl_1.default.routes());
+    .use(acl_1.default.routes())
+    .use(zoemd_1.default.routes());
 
 
 /***/ }),
@@ -935,7 +937,7 @@ var Video = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         videoRoot = ctx.videoRoot;
-                        _a = ctx.query, video = _a.video, seconds = _a.seconds;
+                        _a = ctx.request.body, video = _a.video, seconds = _a.seconds;
                         v = video;
                         vfs = new video_fs_1.VideoFS(videoRoot);
                         return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, v)];
@@ -958,7 +960,168 @@ var Video = /** @class */ (function () {
 exports.Video = Video;
 exports.default = new koa_router_1.default()
     .get('/video/metadata', Video.metadata)
-    .get('/video/screenshot', Video.screenshot);
+    .post('/video/screenshot', Video.screenshot);
+
+
+/***/ }),
+
+/***/ "./src/service/zoemd.ts":
+/*!******************************!*\
+  !*** ./src/service/zoemd.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */ "koa-router"));
+var video_file_1 = __webpack_require__(/*! ../videofs/video_file */ "./src/videofs/video_file.ts");
+var video_media_1 = __webpack_require__(/*! ../videofs/video_media */ "./src/videofs/video_media.ts");
+var ffmpeg_1 = __webpack_require__(/*! ../ffmpeg */ "./src/ffmpeg/index.ts");
+var fs_extra_1 = tslib_1.__importDefault(__webpack_require__(/*! fs-extra */ "fs-extra"));
+var path_1 = tslib_1.__importDefault(__webpack_require__(/*! path */ "path"));
+var Zoemd = /** @class */ (function () {
+    function Zoemd() {
+    }
+    Zoemd.zoemd_create = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vod, _a, force, ffmpeg, metadata, result;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        vod = ctx.vod;
+                        _a = ctx.request.body.force, force = _a === void 0 ? false : _a;
+                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath);
+                        return [4 /*yield*/, ffmpeg.getMetadata()];
+                    case 1:
+                        metadata = _b.sent();
+                        delete metadata.origin;
+                        delete metadata.codec_type;
+                        return [4 /*yield*/, video_media_1.VideoMedia.createMedia(vod, metadata, force)];
+                    case 2:
+                        result = _b.sent();
+                        ctx.body = result || {
+                            status: 'exists'
+                        };
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Zoemd.zoemd_get = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vod, media, _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        vod = ctx.vod;
+                        media = new video_media_1.VideoMedia(vod);
+                        _a = ctx;
+                        return [4 /*yield*/, media.getZoemd()];
+                    case 1:
+                        _a.body = _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Zoemd.screenshot_set = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vod, seconds, media, ffmpeg, _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        vod = ctx.vod;
+                        seconds = ctx.request.body.seconds;
+                        media = new video_media_1.VideoMedia(vod);
+                        ffmpeg = new ffmpeg_1.FFMpeg(vod.absolutePath, media.getZoemdPath().dir);
+                        return [4 /*yield*/, ffmpeg.takeScreenshot([{
+                                    seconds: +seconds,
+                                    name: '' + Math.floor(+seconds)
+                                }])];
+                    case 1:
+                        _b.sent();
+                        return [4 /*yield*/, media.setScreenshot(+seconds)];
+                    case 2:
+                        _b.sent();
+                        _a = ctx;
+                        return [4 /*yield*/, media.getZoemd()];
+                    case 3:
+                        _a.body = _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Zoemd.screenshot_remove = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vod, seconds, media, dir, abandonFile, _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        vod = ctx.vod;
+                        seconds = ctx.request.body.seconds;
+                        media = new video_media_1.VideoMedia(vod);
+                        dir = media.getZoemdPath().dir;
+                        abandonFile = path_1.default.join(dir, Math.floor(+seconds) + ".jpg");
+                        return [4 /*yield*/, fs_extra_1.default.pathExists(abandonFile)];
+                    case 1:
+                        if (!_b.sent()) return [3 /*break*/, 3];
+                        return [4 /*yield*/, fs_extra_1.default.remove(abandonFile)];
+                    case 2:
+                        _b.sent();
+                        _b.label = 3;
+                    case 3: return [4 /*yield*/, media.removeScreenshot(+seconds)];
+                    case 4:
+                        _b.sent();
+                        _a = ctx;
+                        return [4 /*yield*/, media.getZoemd()];
+                    case 5:
+                        _a.body = _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return Zoemd;
+}());
+exports.Zoemd = Zoemd;
+exports.default = new koa_router_1.default()
+    .use(function (ctx, next) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var vfs, video, _a;
+    var _b, _c;
+    return tslib_1.__generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                vfs = ctx.vfs;
+                video = '';
+                if ((_b = ctx.request.query) === null || _b === void 0 ? void 0 : _b.video) {
+                    video = ctx.request.query.video;
+                }
+                if ((_c = ctx.request.body) === null || _c === void 0 ? void 0 : _c.video) {
+                    video = ctx.request.body.video;
+                }
+                if (!video) {
+                    ctx.body = {
+                        status: 'not found!'
+                    };
+                    ctx.state = 404;
+                    return [2 /*return*/];
+                }
+                _a = ctx;
+                return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, video)];
+            case 1:
+                _a.vod = _d.sent();
+                return [2 /*return*/, next()];
+        }
+    });
+}); })
+    .post('/zoemd', Zoemd.zoemd_create)
+    .get('/zoemd', Zoemd.zoemd_get)
+    .post('/zoemd/screenshot', Zoemd.screenshot_set)
+    .delete('/zoemd/screenshot', Zoemd.screenshot_remove);
 
 
 /***/ }),
@@ -1027,6 +1190,11 @@ var FSEntry = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(FSEntry.prototype, "createTime", {
+        get: function () { return this.state.ctimeMs; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(FSEntry.prototype, "isSystemFile", {
         /**
          * 是否為總統檔案，包含一些 metadata 檔案。
@@ -1039,11 +1207,14 @@ var FSEntry = /** @class */ (function () {
             var equals = [
                 '.DS_Store'
             ];
-            var endWiths = [
-                '.zoemd',
-                '.zoemd.jpg' // 影片縮圖。
+            var startWiths = [
+                '.',
+                '@'
             ];
-            if (this.name.startsWith('.')) {
+            var endWiths = [
+                '.zoemd'
+            ];
+            if (endWiths.find(function (v) { return _this.name.startsWith(v); })) {
                 return true;
             }
             if (endWiths.find(function (v) { return _this.name.endsWith(v); })) {
@@ -1071,6 +1242,8 @@ exports.FSEntry = FSEntry;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+var path_1 = tslib_1.__importDefault(__webpack_require__(/*! path */ "path"));
 var Util = /** @class */ (function () {
     function Util() {
     }
@@ -1092,6 +1265,14 @@ var Util = /** @class */ (function () {
         else {
             return video;
         }
+    };
+    Util.getZoemdInfo = function (file) {
+        var zoemdDir = file + ".zoemd";
+        var zoemdFile = path_1.default.join(zoemdDir, 'video.json');
+        return {
+            dir: zoemdDir,
+            file: zoemdFile,
+        };
     };
     Util.supportVideoFormats = [
         '.mp4',
@@ -1179,6 +1360,11 @@ var VideoFile = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    /** 是否包含了 Zoemd 資訊。 */
+    VideoFile.prototype.containsZoemd = function () {
+        var exists = fs_extra_1.default.pathExistsSync(this.absolutePath + ".zoemd");
+        return exists;
+    };
     return VideoFile;
 }());
 exports.VideoFile = VideoFile;
@@ -1266,6 +1452,134 @@ var VideoFS = /** @class */ (function () {
     return VideoFS;
 }());
 exports.VideoFS = VideoFS;
+
+
+/***/ }),
+
+/***/ "./src/videofs/video_media.ts":
+/*!************************************!*\
+  !*** ./src/videofs/video_media.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+var util_1 = __webpack_require__(/*! ./util */ "./src/videofs/util.ts");
+var fs_extra_1 = tslib_1.__importDefault(__webpack_require__(/*! fs-extra */ "fs-extra"));
+/**
+ *代表一個影片媒體，包含了影片檔、縮圖檔、預覽檔等相關檔案與目錄。
+ */
+var VideoMedia = /** @class */ (function () {
+    function VideoMedia(
+    /** 影片檔案資訊。 */
+    file) {
+        this.file = file;
+    }
+    VideoMedia.createMedia = function (vf, metadata, force) {
+        if (force === void 0) { force = false; }
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var zoemd;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        zoemd = util_1.Util.getZoemdInfo(vf.absolutePath);
+                        return [4 /*yield*/, fs_extra_1.default.ensureDir(zoemd.dir)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, fs_extra_1.default.pathExists(zoemd.file)];
+                    case 2:
+                        if ((_a.sent()) && !force) {
+                            return [2 /*return*/, false];
+                        }
+                        return [4 /*yield*/, fs_extra_1.default.writeJSON(zoemd.file, {
+                                metadata: metadata,
+                                screenshots: []
+                            }, { spaces: 2 })];
+                    case 3:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                zoemd: zoemd,
+                                metadata: metadata
+                            }];
+                }
+            });
+        });
+    };
+    VideoMedia.prototype.getZoemd = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var zoemd;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        zoemd = util_1.Util.getZoemdInfo(this.file.absolutePath);
+                        return [4 /*yield*/, fs_extra_1.default.readJSON(zoemd.file)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    VideoMedia.prototype.getZoemdPath = function () {
+        return util_1.Util.getZoemdInfo(this.file.absolutePath);
+    };
+    /** 加入快照時間點。 */
+    VideoMedia.prototype.setScreenshot = function (seconds) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var sec, zoemdInfo, zoemd, screenshots;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sec = +seconds;
+                        zoemdInfo = util_1.Util.getZoemdInfo(this.file.absolutePath);
+                        return [4 /*yield*/, fs_extra_1.default.readJSON(zoemdInfo.file)];
+                    case 1:
+                        zoemd = _a.sent();
+                        screenshots = (zoemd.screenshots || [])
+                            // 把 null、undefined 去掉。
+                            // 秒數一樣的去掉。
+                            .filter(function (v) { var _a; return (_a = ((v === 0 || !!v))) !== null && _a !== void 0 ? _a : false; })
+                            .filter(function (v) { return Math.floor(v) !== Math.floor(sec); });
+                        screenshots.push(sec);
+                        screenshots.sort(function (x, y) { return x - y; });
+                        zoemd.screenshots = screenshots;
+                        return [4 /*yield*/, fs_extra_1.default.writeJSON(zoemdInfo.file, zoemd)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    VideoMedia.prototype.removeScreenshot = function (seconds) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var sec, zoemdInfo, zoemd, screenshots;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sec = +seconds;
+                        zoemdInfo = util_1.Util.getZoemdInfo(this.file.absolutePath);
+                        return [4 /*yield*/, fs_extra_1.default.readJSON(zoemdInfo.file)];
+                    case 1:
+                        zoemd = _a.sent();
+                        screenshots = (zoemd.screenshots || [])
+                            // 把 null、undefined 去掉。
+                            // 秒數一樣的去掉。
+                            .filter(function (v) { var _a; return (_a = ((v === 0 || !!v))) !== null && _a !== void 0 ? _a : false; })
+                            .filter(function (v) { return Math.floor(v) !== Math.floor(sec); });
+                        zoemd.screenshots = screenshots;
+                        return [4 /*yield*/, fs_extra_1.default.writeJSON(zoemdInfo.file, zoemd)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return VideoMedia;
+}());
+exports.VideoMedia = VideoMedia;
 
 
 /***/ }),
