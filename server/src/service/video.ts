@@ -1,8 +1,12 @@
 import Router from 'koa-router';
 import { VideoFS } from '../videofs/video_fs';
 import { VideoFile } from '../videofs/video_file';
+import { VideoMedia } from '../videofs/video_media';
 import { FFMpeg } from '../ffmpeg';
 import { ServiceContext } from '../types';
+import { Util } from '../videofs/util';
+
+import fs from 'fs-extra';
 
 export class Video {
     public static async metadata(ctx: ServiceContext) {
@@ -33,10 +37,24 @@ export class Video {
             status: success
         };
     }
+
+    public static async createZoemd(ctx: ServiceContext) {
+        const { videoRoot } = ctx;
+        const { video, force = false } = ctx.request.body;
+
+        const vfs = new VideoFS(videoRoot);
+        const vod = await VideoFile.fromFile(vfs, video);
+
+        const result = await VideoMedia.createMedia(vfs, vod, force);
+        ctx.body = result || {
+            status: 'exists'
+        }
+    }
 }
 
 
 export default new Router()
 .get('/video/metadata', Video.metadata)
 .post('/video/screenshot', Video.screenshot)
+.post('/video/zoemd', Video.createZoemd)
 ;

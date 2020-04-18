@@ -1,3 +1,4 @@
+import path from 'path';
 
 export class Util {
 
@@ -33,6 +34,16 @@ export class Util {
             return Util.isImageFile(file);
         } else {
             return video;
+        }
+    }
+
+    public static getZoemdInfo(file: string) {
+        const zoemdDir = `${file}.zoemd`;
+        const zoemdFile = path.join(zoemdDir, 'video.json');
+
+        return {
+            dir: zoemdDir,
+            file: zoemdFile,
         }
     }
 }

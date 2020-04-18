@@ -46,7 +46,7 @@ export class VideoFile {
 
     /** 是否包含了 Zoemd 資訊。 */
     public containsZoemd() {
-        const exists = fsex.pathExistsSync(path.join(this.absolutePath, '.zoemd'));
+        const exists = fsex.pathExistsSync(`${this.absolutePath}.zoemd`);
         return exists;
     }
 }
