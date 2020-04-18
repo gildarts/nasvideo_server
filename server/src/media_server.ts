@@ -19,7 +19,7 @@ export const wrapCallback = function(cb: http.RequestListener) {
             const root = getVideoRoot(srcRecord.data.video_src);
             const fullpath = path.join(root, rpath);
 
-            if(!await exists(fullpath) && query.query.default === 'jpg') {
+            if(!await fsex.pathExists(fullpath) && query.query.default === 'jpg') {
                 partialSend(req, path.join(root, 'default.jpg')).pipe(rsp);
             } else {
                 partialSend(req,  fullpath, {
@@ -32,16 +32,9 @@ export const wrapCallback = function(cb: http.RequestListener) {
     }
 }
 
-const exists = function(path: string) {
-    return new Promise((r, _) => {
-        fsex.exists(path, (exists) => {
-            r(exists);
-        })
-    })
-}
-
 const getSessionId = function(cookie: string) {
     if (!!!cookie) { return ''; }
+    if (cookie.indexOf('koa_nasvideo') < 0) { return ''; }
 
     const pattern = /koa_nasvideo=([\w\d-]*);/;
     return pattern.exec(cookie)[1];
