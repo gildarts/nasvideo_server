@@ -33,6 +33,8 @@ export class TimeUtil {
             duration: duration,
             width: +foundStream.width,
             height: +foundStream.height,
+            codec_name: foundStream.codec_name,
+            codec_type: foundStream.codec_type,
             origin: vd
         } as VideoMetadata;
     }

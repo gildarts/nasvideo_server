@@ -20,7 +20,7 @@ export class FFMpeg {
      * 取得影片相關資訊。
      */
     public async getMetadata() {
-        const cmd = `ffprobe "${this.absolutePath}" -show_entries stream=duration,width,height,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet`;
+        const cmd = `ffprobe "${this.absolutePath}" -show_entries stream=duration,width,height,codec_name,codec_type:stream_tags=DURATION,DURATION-eng -of json -v quiet`;
 
         const cli = new FFProbeCLI(cmd, this.cwd);
 

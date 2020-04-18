@@ -9,8 +9,11 @@
     "video_roots": [
         {
             "name": "default",
-            "path": "/Users/yaoming/opt/av",
-            "path_": "/Volumes/8t"
+            "path": "/Volumes/video"
+        },
+        {
+            "name": "av",
+            "path": "/Users/yaoming/opt/av"
         },
         {
             "name": "zoe",

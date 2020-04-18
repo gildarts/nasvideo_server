@@ -5,6 +5,7 @@ export interface VideoData {
 
 export interface Stream {
     codec_type: 'video' | 'audio';
+    codec_name: string;
     width?: number;
     height?: number;
     duration?: number;
@@ -24,5 +25,9 @@ export interface VideoMetadata {
 
     height: number;
 
-    origin: VideoData
+    codec_type: string;
+
+    codec_name: string;
+
+    origin: VideoData;
 }

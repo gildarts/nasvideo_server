@@ -62,12 +62,17 @@ export class FSEntry {
             '.DS_Store'
         ]
 
+        const startWiths = [
+            '.',
+            '@'
+        ]
+
         const endWiths = [
             '.zoemd',
             '.zoemd.jpg' // 影片縮圖。
         ]
 
-        if (this.name.startsWith('.')) {
+        if (endWiths.find(v => this.name.startsWith(v))) {
             return true;
         }
 

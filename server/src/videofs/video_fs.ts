@@ -16,7 +16,7 @@ export class VideoFS {
      */
     public async list(relPath: string, withoutSystemFile: boolean = true) {
         const entries = await fsex.readdir(path.join(this.basePath, relPath));
-
+        
         const fsentries: FSEntry[] = []
         for (const e of entries) {
             const file = path.join(relPath, e);
