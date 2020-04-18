@@ -10,7 +10,8 @@ import { FFMpeg } from '../ffmpeg';
 export class VideoMedia {
 
     constructor(
-        private vf: VideoFile
+        /** 影片檔案資訊。 */
+        private file: VideoFile
     ) { }
 
     public static async createMedia(fs: VideoFS, vf: VideoFile, force = false) {
@@ -35,5 +36,10 @@ export class VideoMedia {
             zoemd,
             metadata
         }
+    }
+
+    public async getZoemd() {
+        const zoemd = Util.getZoemdInfo(this.file.absolutePath);
+        return await fsex.readJSON(zoemd.file);
     }
 }

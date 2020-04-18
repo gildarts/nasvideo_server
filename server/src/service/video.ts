@@ -50,11 +50,22 @@ export class Video {
             status: 'exists'
         }
     }
-}
 
+    public static async getZoemd(ctx: ServiceContext) {
+        const { videoRoot } = ctx;
+        const { video } = ctx.request.query;
+
+        const vfs = new VideoFS(videoRoot);
+        const vod = await VideoFile.fromFile(vfs, video);
+        const media = new VideoMedia(vod);
+
+        ctx.body = await media.getZoemd();
+    }
+}
 
 export default new Router()
 .get('/video/metadata', Video.metadata)
 .post('/video/screenshot', Video.screenshot)
 .post('/video/zoemd', Video.createZoemd)
+.get('/video/zoemd', Video.getZoemd)
 ;
