@@ -23,7 +23,8 @@ export class FS {
                     size: v.isDir ? 0 : v.size, 
                     isFile: v.isFile, 
                     format: new VideoFile(vr, v).format,
-                    isVideo: VideoFile.isVideo(v)
+                    isVideo: VideoFile.isVideo(v),
+                    create_time: v.createTime,
                 };
             })
         };
