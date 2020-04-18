@@ -70,8 +70,7 @@ export class FSEntry {
         ]
 
         const endWiths = [
-            '.zoemd',
-            '.zoemd.jpg' // 影片縮圖。
+            '.zoemd'
         ]
 
         if (endWiths.find(v => this.name.startsWith(v))) {

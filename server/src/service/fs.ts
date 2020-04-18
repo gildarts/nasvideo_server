@@ -17,13 +17,15 @@ export class FS {
         ctx.body = {
             videos: pathInfoList
             .map(v => {
+                const video = new VideoFile(vr, v);
                 return {
                     name: v.name,
                     path: v.getPath(),
                     size: v.isDir ? 0 : v.size, 
                     isFile: v.isFile, 
-                    format: new VideoFile(vr, v).format,
+                    format: video.format,
                     isVideo: VideoFile.isVideo(v),
+                    containsZoemd: VideoFile.isVideo(v) ? video.containsZoemd() : false,
                     create_time: v.createTime,
                 };
             })

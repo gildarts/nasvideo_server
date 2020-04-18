@@ -43,4 +43,9 @@ export class VideoFile {
     public get absolutePath() {
         return this.entry.getAbsolutePath(this.vfs);
     }
+
+    /** 是否包含了 Zoemd 資訊。 */
+    public containsZoemd() {
+        return true;
+    }
 }
