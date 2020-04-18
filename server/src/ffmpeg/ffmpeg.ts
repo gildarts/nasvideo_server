@@ -46,7 +46,7 @@ export class FFMpeg {
                 fileName = `${fn}_${post}`;    
              }
 
-            const cmd = `ffmpeg -ss ${each.seconds} -i "${this.absolutePath}" -r 1 -vframes 1 -y "${fileName}.jpg"`
+            const cmd = `ffmpeg -ss ${each.seconds} -i "${this.absolutePath}" -r 1 -vframes 1 -vf scale=640:-1 -y "${fileName}.jpg"`
 
             const cli = new FFMpegCLI(cmd, this.cwd);
     
