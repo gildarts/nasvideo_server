@@ -2,17 +2,15 @@ import http from 'http';
 import Koa from 'koa';
 import serve from 'koa-static';
 import send from 'koa-send';
-import partialSend from 'send';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser'
 import createSession from './common/session_store';
 import { setupDBConnection, checkSessionData, setXFrameOptionsDENY, setVideoRoot } from './common/middlewares';
 import allservice from './service';
-import { getVideoRoot } from './config';
-import * as qs from 'query-string';
 import { db as connections } from './common/database';
-const db = connections.default;
+import { wrapCallback } from './media_server';
 
+const db = connections.default;
 const PORT = process.env.PORT || 3000;
 
 async function main(app: Koa) {
@@ -47,32 +45,6 @@ async function main(app: Koa) {
     (app as any).server = server;
 
     console.log('complete');
-}
-
-const wrapCallback = function(cb: http.RequestListener) {
-    return async (req: http.IncomingMessage, rsp: http.ServerResponse) => {
-        const query = qs.parseUrl(req.url);
-        const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
-        const sid = getSessionId(req.headers.cookie);
-        const srcRecord = await db.oneOrNone('select data from session WHERE session_id like $(sid)', {sid}) || {data: {}};
-
-        if(aUrl.startsWith('path:/media')) {
-            const rpath = aUrl.replace('path:/media', '');
-            const root = getVideoRoot(srcRecord.data.video_src);
-            partialSend(req,  `${root}${rpath}`, {
-                acceptRanges: true
-            }).pipe(rsp);
-        } else {
-            cb(req, rsp);
-        }
-    }
-}
-
-const getSessionId = function(cookie: string) {
-    if (!!!cookie) { return ''; }
-
-    const pattern = /koa_nasvideo=([\w\d-]*);/;
-    return pattern.exec(cookie)[1];
 }
 
 main(new Koa());
