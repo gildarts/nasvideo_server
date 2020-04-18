@@ -1,6 +1,7 @@
 import { ServiceContext } from '../types';
 import { db } from './database';
 import { getVideoRoot } from '../config';
+import { VideoFS } from '../videofs/video_fs';
 
 export const setXFrameOptionsDENY = (ctx: ServiceContext, next: () => Promise<void>) => {
     ctx.response.set({
@@ -27,5 +28,6 @@ export const checkSessionData = (ctx: ServiceContext, next: () => Promise<void>)
 
 export const setVideoRoot = (ctx: ServiceContext, next: () => Promise<void>) => {   
     ctx.videoRoot = getVideoRoot(ctx.session.video_src);
+    ctx.vfs = new VideoFS(ctx.videoRoot);
     return next();
 };
