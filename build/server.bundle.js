@@ -1062,7 +1062,7 @@ var Zoemd = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         vod = ctx.vod;
-                        seconds = ctx.request.body.seconds;
+                        seconds = ctx.request.query.seconds;
                         media = new video_media_1.VideoMedia(vod);
                         dir = media.getZoemdPath().dir;
                         abandonFile = path_1.default.join(dir, Math.floor(+seconds) + ".jpg");
@@ -1191,7 +1191,7 @@ var FSEntry = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(FSEntry.prototype, "createTime", {
-        get: function () { return this.state.ctimeMs; },
+        get: function () { return this.state.birthtimeMs; },
         enumerable: true,
         configurable: true
     });
@@ -1209,12 +1209,13 @@ var FSEntry = /** @class */ (function () {
             ];
             var startWiths = [
                 '.',
-                '@'
+                '@',
+                '#'
             ];
             var endWiths = [
                 '.zoemd'
             ];
-            if (endWiths.find(function (v) { return _this.name.startsWith(v); })) {
+            if (startWiths.find(function (v) { return _this.name.startsWith(v); })) {
                 return true;
             }
             if (endWiths.find(function (v) { return _this.name.endsWith(v); })) {
