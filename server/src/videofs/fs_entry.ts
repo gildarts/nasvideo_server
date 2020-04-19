@@ -51,7 +51,7 @@ export class FSEntry {
 
     public get isFile() { return this.state.isFile(); }
 
-    public get createTime() { return this.state.ctimeMs; }
+    public get createTime() { return this.state.birthtimeMs; }
 
     /**
      * 是否為總統檔案，包含一些 metadata 檔案。
