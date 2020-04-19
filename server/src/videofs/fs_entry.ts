@@ -66,14 +66,15 @@ export class FSEntry {
 
         const startWiths = [
             '.',
-            '@'
+            '@',
+            '#'
         ]
 
         const endWiths = [
             '.zoemd'
         ]
 
-        if (endWiths.find(v => this.name.startsWith(v))) {
+        if (startWiths.find(v => this.name.startsWith(v))) {
             return true;
         }
 
