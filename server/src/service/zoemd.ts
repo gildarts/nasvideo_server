@@ -49,7 +49,7 @@ export class Zoemd {
 
     public static async screenshot_remove(ctx: ServiceContext) {
         const { vod } = ctx;
-        const { seconds } = ctx.request.body;
+        const { seconds } = ctx.request.query;
 
         const media = new VideoMedia(vod);
         const dir = media.getZoemdPath().dir;
