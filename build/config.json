@@ -6,26 +6,29 @@
         "password": "videouser",
         "port": 5433
     },
+    "bson": {
+        "host": "speedfusionbson",
+        "database": "underground",
+        "user": "videouser",
+        "password": "videouser",
+        "port": 27018
+    },
     "video_roots": [
         {
             "name": "default",
             "path": "/Volumes/video"
         },
         {
-            "name": "8t",
-            "path": "/Volumes/8t"
-        },
-        {
-            "name": "av",
-            "path": "/Users/yaoming/opt/av"
-        },
-        {
-            "name": "zoe",
+            "name": "video",
             "path": "/video"
         },
         {
             "name": "download",
             "path": "/download"
+        },
+        {
+            "name": "8T",
+            "path": "/8T"
         }
     ]
 }

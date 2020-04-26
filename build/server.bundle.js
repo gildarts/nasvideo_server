@@ -106,11 +106,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var config_1 = tslib_1.__importDefault(__webpack_require__(/*! ../config */ "./src/config.ts"));
 var pg_promise_1 = tslib_1.__importDefault(__webpack_require__(/*! pg-promise */ "pg-promise"));
+var mongodb_1 = __webpack_require__(/*! mongodb */ "mongodb");
+/** mongo db client。 */
+var _a = config_1.default.bson, user = _a.user, password = _a.password, host = _a.host, port = _a.port;
+exports.bsonDB = new mongodb_1.MongoClient("mongodb://" + user + ":" + password + "@" + host + ":" + port, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    poolSize: 6,
+});
 var pgp = pg_promise_1.default();
 /** 資料庫連線 instance。 */
 exports.db = {
     /** 預設資料庫連線(字音字形網資料庫)。 */
-    default: pgp(config_1.default.db)
+    default: pgp(config_1.default.db),
+    /** mongo db 資料庫。 */
+    mongo: null,
 };
 
 
@@ -209,25 +219,24 @@ exports.setVideoRoot = function (ctx, next) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var database_1 = __webpack_require__(/*! ./database */ "./src/common/database.ts");
-var moment_1 = tslib_1.__importDefault(__webpack_require__(/*! moment */ "moment"));
 var koa_session_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-session */ "koa-session"));
-var connection = database_1.db.default;
 var TableName = 'session';
 var db_store = {
     get: function (key, maxAge, _a) {
         var rolling = _a.rolling;
         return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var cmd, record, data, err_1;
+            var mongodb, session, bsonRecord, data, err_1;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        cmd = "select * from " + TableName + " where session_id = $(key)";
-                        return [4 /*yield*/, connection.oneOrNone(cmd, { key: key })];
+                        mongodb = database_1.db.mongodb;
+                        session = mongodb.collection(TableName);
+                        return [4 /*yield*/, session.findOne({ session_id: key })];
                     case 1:
-                        record = _b.sent();
-                        if (record) {
-                            data = record.data || {};
+                        bsonRecord = _b.sent();
+                        if (bsonRecord) {
+                            data = bsonRecord.data || {};
                             data._id = key;
                             return [2 /*return*/, data];
                         }
@@ -246,48 +255,42 @@ var db_store = {
     set: function (key, sess, maxAge, _a) {
         var rolling = _a.rolling, changed = _a.changed;
         return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var data, time, get, record, cmd, cmd, error_1;
+            var mongodb, session, error_1;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 6, , 7]);
+                        _b.trys.push([0, 2, , 3]);
                         if (!changed)
                             return [2 /*return*/];
-                        data = JSON.stringify(sess);
-                        time = moment_1.default().add(1, "hour").valueOf();
-                        get = "select expiry_date from " + TableName + " where session_id = $(key)";
-                        return [4 /*yield*/, connection.oneOrNone(get, { key: key })];
+                        mongodb = database_1.db.mongodb;
+                        session = mongodb.collection(TableName);
+                        return [4 /*yield*/, session.findOneAndUpdate({ session_id: key }, {
+                                $set: { data: sess, expiration: new Date() }
+                            }, {
+                                upsert: true
+                            })];
                     case 1:
-                        record = _b.sent();
-                        if (!record) return [3 /*break*/, 3];
-                        cmd = "update " + TableName + " set expiry_date = $(time), data = $(data) where session_id = $(key)";
-                        return [4 /*yield*/, connection.none(cmd, { key: key, time: time, data: data })];
+                        _b.sent();
+                        return [3 /*break*/, 3];
                     case 2:
-                        _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3:
-                        cmd = "insert into " + TableName + "(session_id, expiry_date, data) values($(key), $(time), $(data))";
-                        return [4 /*yield*/, connection.none(cmd, { key: key, time: time, data: data })];
-                    case 4:
-                        _b.sent();
-                        _b.label = 5;
-                    case 5: return [3 /*break*/, 7];
-                    case 6:
                         error_1 = _b.sent();
                         console.error("set session occure error: " + error_1.message);
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     },
     destroy: function (key) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var cmd;
+        var mongodb, session;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    cmd = "delete from " + TableName + " where session_id = $(key)";
-                    return [4 /*yield*/, connection.none(cmd, { key: key })];
+                    mongodb = database_1.db.mongodb;
+                    session = mongodb.collection(TableName);
+                    return [4 /*yield*/, session.deleteOne({
+                            session_id: key
+                        })];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
@@ -297,7 +300,7 @@ var db_store = {
 };
 var session_conf = {
     key: 'koa_nasvideo',
-    maxAge: 24 * 60 * 60 * 1000 * 1000,
+    maxAge: 24 * 60 * 60 * 1000,
     overwrite: true,
     httpOnly: true,
     signed: true,
@@ -648,18 +651,19 @@ var send_1 = tslib_1.__importDefault(__webpack_require__(/*! send */ "send"));
 var config_1 = __webpack_require__(/*! ./config */ "./src/config.ts");
 var qs = tslib_1.__importStar(__webpack_require__(/*! query-string */ "query-string"));
 var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/database.ts");
-var db = database_1.db.default;
 exports.wrapCallback = function (cb) {
     var _this = this;
     return function (req, rsp) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-        var query, aUrl, sid, srcRecord, rpath, root, fullpath;
+        var mongo, session, query, aUrl, sid, srcRecord, rpath, root, fullpath;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    mongo = database_1.db.mongodb;
+                    session = mongo.collection('session');
                     query = qs.parseUrl(req.url);
                     aUrl = "path:" + query.url;
                     sid = getSessionId(req.headers.cookie);
-                    return [4 /*yield*/, db.oneOrNone('select data from session WHERE session_id like $(sid)', { sid: sid })];
+                    return [4 /*yield*/, session.findOne({ session_id: sid })];
                 case 1:
                     srcRecord = (_a.sent()) || { data: {} };
                     if (!aUrl.startsWith('path:/media')) return [3 /*break*/, 3];
@@ -721,44 +725,53 @@ var middlewares_1 = __webpack_require__(/*! ./common/middlewares */ "./src/commo
 var service_1 = tslib_1.__importDefault(__webpack_require__(/*! ./service */ "./src/service/index.ts"));
 var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/database.ts");
 var media_server_1 = __webpack_require__(/*! ./media_server */ "./src/media_server.ts");
+var config_1 = tslib_1.__importDefault(__webpack_require__(/*! config */ "config"));
 var db = database_1.db.default;
 var PORT = process.env.PORT || 3000;
 function main(app) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var general, callback, server;
+        var _a, general, callback, server;
         var _this = this;
-        return tslib_1.__generator(this, function (_a) {
-            app.keys = ['1234'];
-            // 靜態檔案。
-            app.use(koa_static_1.default("./public"));
-            app.use(koa_bodyparser_1.default());
-            app.use(middlewares_1.setupDBConnection);
-            app.use(session_store_1.default(app));
-            app.use(middlewares_1.checkSessionData);
-            app.use(middlewares_1.setVideoRoot);
-            general = new koa_router_1.default();
-            general.use('/service', service_1.default.routes());
-            app.use(general.routes());
-            // 設定 X-Frame-Options: DENY，安全性掃描需要。
-            app.use(middlewares_1.setXFrameOptionsDENY);
-            // 處理 html5 mode。
-            app.use(function (ctx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                return tslib_1.__generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            console.log("resource not found: \u300C" + ctx.path + "\u300D, fallback to \u300C/index.html\u300D.");
-                            return [4 /*yield*/, koa_send_1.default(ctx, "./public/index.html")];
-                        case 1:
-                            _a.sent(); // html5 mode
-                            return [2 /*return*/];
-                    }
-                });
-            }); });
-            callback = media_server_1.wrapCallback(app.callback());
-            server = http_1.default.createServer(callback).listen(PORT);
-            app.server = server;
-            console.log('complete');
-            return [2 /*return*/];
+        return tslib_1.__generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    app.keys = ['1234'];
+                    _a = database_1.db;
+                    return [4 /*yield*/, database_1.bsonDB.connect()];
+                case 1:
+                    _a.mongo = _b.sent();
+                    database_1.db.mongodb = database_1.db.mongo.db(config_1.default.bson.database);
+                    // 靜態檔案。
+                    app.use(koa_static_1.default("./public"));
+                    app.use(koa_bodyparser_1.default());
+                    app.use(middlewares_1.setupDBConnection);
+                    app.use(session_store_1.default(app));
+                    app.use(middlewares_1.checkSessionData);
+                    app.use(middlewares_1.setVideoRoot);
+                    general = new koa_router_1.default();
+                    general.use('/service', service_1.default.routes());
+                    app.use(general.routes());
+                    // 設定 X-Frame-Options: DENY，安全性掃描需要。
+                    app.use(middlewares_1.setXFrameOptionsDENY);
+                    // 處理 html5 mode。
+                    app.use(function (ctx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                        return tslib_1.__generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    console.log("resource not found: \u300C" + ctx.path + "\u300D, fallback to \u300C/index.html\u300D.");
+                                    return [4 /*yield*/, koa_send_1.default(ctx, "./public/index.html")];
+                                case 1:
+                                    _a.sent(); // html5 mode
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
+                    callback = media_server_1.wrapCallback(app.callback());
+                    server = http_1.default.createServer(callback).listen(PORT);
+                    app.server = server;
+                    console.log('complete');
+                    return [2 /*return*/];
+            }
         });
     });
 }
@@ -780,7 +793,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */ "koa-router"));
 var database_1 = __webpack_require__(/*! ../common/database */ "./src/common/database.ts");
-var db = database_1.db.default;
 var ACL = /** @class */ (function () {
     function ACL() {
     }
@@ -795,11 +807,54 @@ var ACL = /** @class */ (function () {
             });
         });
     };
+    ACL.mongodb = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var mongo, coll, records;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        mongo = database_1.db.mongodb;
+                        coll = mongo.collection('session');
+                        return [4 /*yield*/, coll.find().toArray()];
+                    case 1:
+                        records = _a.sent();
+                        ctx.session.count = (ctx.session.count || 0) + 1;
+                        ctx.body = {
+                            // news: ret.insertedIds,
+                            records: records
+                        };
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ACL.deleteall = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var mongo, coll, result;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, database_1.db.mongo];
+                    case 1:
+                        mongo = _a.sent();
+                        coll = mongo.db('underground').collection('session');
+                        return [4 /*yield*/, coll.deleteMany({})];
+                    case 2:
+                        result = _a.sent();
+                        ctx.body = {
+                            result: result
+                        };
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     return ACL;
 }());
 exports.ACL = ACL;
 exports.default = new koa_router_1.default()
-    .get('/acl/source', ACL.source);
+    .get('/acl/source', ACL.source)
+    .get('/acl/mongodb', ACL.mongodb)
+    .get('/acl/deleteall', ACL.deleteall);
 
 
 /***/ }),
@@ -1703,6 +1758,17 @@ module.exports = require("koa-static");
 /***/ (function(module, exports) {
 
 module.exports = require("moment");
+
+/***/ }),
+
+/***/ "mongodb":
+/*!**************************!*\
+  !*** external "mongodb" ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("mongodb");
 
 /***/ }),
 
