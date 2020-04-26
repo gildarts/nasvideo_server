@@ -6,6 +6,13 @@
         "password": "videouser",
         "port": 5433
     },
+    "bson": {
+        "uri": "speedfusionbson",
+        "database": "underground",
+        "user": "",
+        "password": "",
+        "port": 27017
+    },
     "video_roots": [
         {
             "name": "default",

@@ -7,7 +7,7 @@ import bodyParser from 'koa-bodyparser'
 import createSession from './common/session_store';
 import { setupDBConnection, checkSessionData, setXFrameOptionsDENY, setVideoRoot } from './common/middlewares';
 import allservice from './service';
-import { db as connections } from './common/database';
+import { db as connections, bsonDB } from './common/database';
 import { wrapCallback } from './media_server';
 
 const db = connections.default;
@@ -15,6 +15,8 @@ const PORT = process.env.PORT || 3000;
 
 async function main(app: Koa) {
     app.keys = ['1234'];
+
+    connections.mongo = await bsonDB.connect();
 
     // 靜態檔案。
     app.use(serve("./public"));
