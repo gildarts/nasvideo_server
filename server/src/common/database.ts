@@ -10,7 +10,7 @@ import PGP from 'pg-promise';
 import conf from '../config';
 import PG from 'pg-promise';
 
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 
 /** mongo db client。 */
 export const bsonDB = new MongoClient(`mongodb://${conf.bson.uri}`, {
@@ -33,6 +33,7 @@ export const db = {
     mongo: null,
 } as {
     default: PGConnection,
-    mongo: MongoClient
+    mongo: MongoClient,
+    mongodb: Db,
 }
 

@@ -9,6 +9,7 @@ import { setupDBConnection, checkSessionData, setXFrameOptionsDENY, setVideoRoot
 import allservice from './service';
 import { db as connections, bsonDB } from './common/database';
 import { wrapCallback } from './media_server';
+import conf from 'config';
 
 const db = connections.default;
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ async function main(app: Koa) {
     app.keys = ['1234'];
 
     connections.mongo = await bsonDB.connect();
+    connections.mongodb = connections.mongo.db(conf.bson.database);
 
     // 靜態檔案。
     app.use(serve("./public"));

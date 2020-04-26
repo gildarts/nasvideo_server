@@ -1,19 +1,19 @@
 import { db } from './database';
-import moment from 'moment';
 import KoaSession from 'koa-session';
 import Koa from 'koa';
 
-const connection = db.default;
 const TableName = 'session';
 
 const db_store = {
     get: async (key: string, maxAge: number, { rolling }: { rolling: any }) => {
         try {
-            const cmd = `select * from ${TableName} where session_id = $(key)`;
-            const record = await connection.oneOrNone(cmd, { key: key });
-    
-            if (record) {
-                const data = record.data || {};
+            const mongodb = db.mongodb;
+
+            const session = mongodb.collection(TableName);
+            const bsonRecord = await session.findOne({session_id: key});
+
+            if (bsonRecord) {
+                const data = bsonRecord.data || {};
                 data._id = key;
                 return data;
             } else {
@@ -28,31 +28,31 @@ const db_store = {
         try {
             if (!changed) return;
 
-            const data = JSON.stringify(sess);
-            const time = moment().add(1, "hour").valueOf();
+            const mongodb = db.mongodb;
+            const session = mongodb.collection(TableName);
 
-            const get = `select expiry_date from ${TableName} where session_id = $(key)`;
-            const record = await connection.oneOrNone(get, { key: key });
-            if (record) {
-                const cmd = `update ${TableName} set expiry_date = $(time), data = $(data) where session_id = $(key)`;
-                await connection.none(cmd, { key: key, time: time, data: data });
-            } else {
-                const cmd = `insert into ${TableName}(session_id, expiry_date, data) values($(key), $(time), $(data))`;
-                await connection.none(cmd, { key: key, time: time, data: data });
-            }
+            await session.findOneAndUpdate({ session_id: key }, {
+                $set: { data: sess, expiration: new Date() }
+            }, {
+                upsert: true
+            });
         } catch (error) {
             console.error(`set session occure error: ${error.message}`);
         }
     },
     destroy: async (key: string) => {
-        const cmd = `delete from ${TableName} where session_id = $(key)`;
-        await connection.none(cmd, { key: key });
+        const mongodb = db.mongodb;
+        const session = mongodb.collection(TableName);
+
+        await session.deleteOne({
+            session_id: key
+        });
     }
 };
 
 const session_conf = {
     key: 'koa_nasvideo', /** (string) cookie key (default is koa:sess) */
-    maxAge: 24 * 60 * 60 * 1000 * 1000, // 用戶端 cookie 過期時間，多久沒使用 cookie 會失效。
+    maxAge: 24 * 60 * 60 * 1000, // 用戶端 cookie 過期時間，多久沒使用 cookie 會失效。
     overwrite: true, /** (boolean) can overwrite or not (default true) */
     httpOnly: true, /** (boolean) httpOnly or not (default true) */
     signed: true, /** (boolean) signed or not (default true) */

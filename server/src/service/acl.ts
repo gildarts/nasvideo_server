@@ -17,26 +17,28 @@ export class ACL {
     }
 
     public static async mongodb(ctx: ServiceContext) {
-        const mongo = connections.mongo;
+        const mongo = connections.mongodb;
 
-        const coll = mongo.db('underground').collection('session');
+        const coll = mongo.collection('session');
 
-        const ret = await coll.insert({
-            session_id: 'string-xxxx-zoe', 
-            create_at: new Date(),
-            data: {
-                names: [
-                    'cindy',
-                    'sandy'
-                ],
+        // const ret = await coll.insert({
+        //     session_id: Date.now(), 
+        //     create_at: new Date(),
+        //     data: {
+        //         names: [
+        //             'cindy',
+        //             'sandy'
+        //         ],
 
-            }
-        });
+        //     }
+        // });
 
         const records = await coll.find().toArray();
 
+        ctx.session.count = (ctx.session.count || 0) + 1;
+
         ctx.body = {
-            news: ret.insertedIds,
+            // news: ret.insertedIds,
             records
         }
     }
