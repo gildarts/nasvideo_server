@@ -13,7 +13,8 @@ import PG from 'pg-promise';
 import { MongoClient, Db } from 'mongodb';
 
 /** mongo db client。 */
-export const bsonDB = new MongoClient(`mongodb://${conf.bson.uri}`, {
+const {user, password, host, port} = conf.bson;
+export const bsonDB = new MongoClient(`mongodb://${user}:${password}@${host}:${port}`, {
     useNewUrlParser: true,
     useUnifiedTopology:true,
     poolSize: 6,

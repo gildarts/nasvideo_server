@@ -50,9 +50,10 @@ exports.deploy = series(
             .pipe(
                 jeditor({
                     db: {
-                        host: 'speedfusiondb',
-                        password: "videouser",
                         port: 5432
+                    },
+                    bson: {
+                        port: 27017
                     }
                 }))
             // .pipe(rename('config.json.template'))
