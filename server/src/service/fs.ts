@@ -31,8 +31,13 @@ export class FS {
             })
         };
     }
+
+    public static async move_to_parent(ctx: ServiceContext) {
+        const { vfs } = ctx;
+    }
 }
 
 export default new Router()
     .get('/fs/list', FS.list)
+    .get('/fs/move_to_parent', FS.move_to_parent)
     ;

@@ -911,11 +911,21 @@ var FS = /** @class */ (function () {
             });
         });
     };
+    FS.move_to_parent = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vfs;
+            return tslib_1.__generator(this, function (_a) {
+                vfs = ctx.vfs;
+                return [2 /*return*/];
+            });
+        });
+    };
     return FS;
 }());
 exports.FS = FS;
 exports.default = new koa_router_1.default()
-    .get('/fs/list', FS.list);
+    .get('/fs/list', FS.list)
+    .get('/fs/move_to_parent', FS.move_to_parent);
 
 
 /***/ }),
