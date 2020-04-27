@@ -175,9 +175,11 @@ exports.FSUtil = FSUtil;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 var database_1 = __webpack_require__(/*! ./database */ "./src/common/database.ts");
 var config_1 = __webpack_require__(/*! ../config */ "./src/config.ts");
 var video_fs_1 = __webpack_require__(/*! ../videofs/video_fs */ "./src/videofs/video_fs.ts");
+var video_file_1 = __webpack_require__(/*! ../videofs/video_file */ "./src/videofs/video_file.ts");
 exports.setXFrameOptionsDENY = function (ctx, next) {
     ctx.response.set({
         'X-Frame-Options': 'DENY',
@@ -203,6 +205,31 @@ exports.setVideoRoot = function (ctx, next) {
     ctx.vfs = new video_fs_1.VideoFS(ctx.videoRoot);
     return next();
 };
+exports.prepareVideoInfo = function (ctx, next) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var vfs, video, _a;
+    var _b, _c;
+    return tslib_1.__generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                vfs = ctx.vfs;
+                video = '';
+                if ((_b = ctx.request.query) === null || _b === void 0 ? void 0 : _b.video) {
+                    video = ctx.request.query.video;
+                }
+                if ((_c = ctx.request.body) === null || _c === void 0 ? void 0 : _c.video) {
+                    video = ctx.request.body.video;
+                }
+                if (!video) {
+                    return [2 /*return*/, next()];
+                }
+                _a = ctx;
+                return [4 /*yield*/, video_file_1.VideoFile.fromFile(vfs, video)];
+            case 1:
+                _a.vod = _d.sent();
+                return [2 /*return*/, next()];
+        }
+    });
+}); };
 
 
 /***/ }),
@@ -874,6 +901,8 @@ var koa_router_1 = tslib_1.__importDefault(__webpack_require__(/*! koa-router */
 var database_1 = __webpack_require__(/*! ../common/database */ "./src/common/database.ts");
 var video_fs_1 = __webpack_require__(/*! ../videofs/video_fs */ "./src/videofs/video_fs.ts");
 var video_file_1 = __webpack_require__(/*! ../videofs/video_file */ "./src/videofs/video_file.ts");
+var path_1 = tslib_1.__importDefault(__webpack_require__(/*! path */ "path"));
+var middlewares_1 = __webpack_require__(/*! ../common/middlewares */ "./src/common/middlewares.ts");
 var db = database_1.db.default;
 var FS = /** @class */ (function () {
     function FS() {
@@ -913,10 +942,21 @@ var FS = /** @class */ (function () {
     };
     FS.move_to_parent = function (ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var vfs;
+            var vfs, dirname, basename;
             return tslib_1.__generator(this, function (_a) {
-                vfs = ctx.vfs;
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        vfs = ctx.vfs;
+                        dirname = path_1.default.dirname(ctx.vod.absolutePath);
+                        basename = path_1.default.basename(ctx.vod.absolutePath);
+                        return [4 /*yield*/, vfs.move(ctx.vod.absolutePath, dirname + "/../" + basename)];
+                    case 1:
+                        _a.sent();
+                        ctx.body = {
+                            success: true,
+                        };
+                        return [2 /*return*/];
+                }
             });
         });
     };
@@ -924,6 +964,7 @@ var FS = /** @class */ (function () {
 }());
 exports.FS = FS;
 exports.default = new koa_router_1.default()
+    .use(middlewares_1.prepareVideoInfo)
     .get('/fs/list', FS.list)
     .get('/fs/move_to_parent', FS.move_to_parent);
 
@@ -1431,6 +1472,9 @@ var VideoFile = /** @class */ (function () {
         var exists = fs_extra_1.default.pathExistsSync(this.absolutePath + ".zoemd");
         return exists;
     };
+    VideoFile.prototype.getZoemdPath = function () {
+        return this.absolutePath + ".zoemd";
+    };
     return VideoFile;
 }());
 exports.VideoFile = VideoFile;
@@ -1511,6 +1555,33 @@ var VideoFS = /** @class */ (function () {
                             return [2 /*return*/, fsentries];
                         }
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * 移動影片檔案(包含 zoemd 檔)。
+     * @param srcVideoPath 來源影片檔路徑。
+     * @param destVideoPath 目的目錄。
+     */
+    VideoFS.prototype.move = function (srcVideoPath, destVideoPath) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var srcVideoZoemd;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        srcVideoZoemd = srcVideoPath + ".zoemd";
+                        return [4 /*yield*/, fs_extra_1.default.move(srcVideoPath, destVideoPath)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, fs_extra_1.default.pathExists(srcVideoZoemd)];
+                    case 2:
+                        if (!_a.sent()) return [3 /*break*/, 4];
+                        return [4 /*yield*/, fs_extra_1.default.move(srcVideoZoemd, destVideoPath + ".zoemd")];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         });

@@ -46,11 +46,7 @@ export const prepareVideoInfo = async (ctx: ServiceContext, next: any) => {
     }
 
     if (!video) {
-        ctx.body = {
-            status: 'not found!'
-        }
-        ctx.state = 404;
-        return;
+        return next();
     }
     ctx.vod = await VideoFile.fromFile(vfs, video);
 
