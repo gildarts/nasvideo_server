@@ -3,6 +3,8 @@ import { ServiceContext } from '../types';
 import { db as connections } from '../common/database';
 import { VideoFS } from '../videofs/video_fs';
 import { VideoFile } from '../videofs/video_file';
+import path from 'path';
+import { prepareVideoInfo } from '../common/middlewares';
 
 const db = connections.default;
 export class FS {
@@ -34,10 +36,19 @@ export class FS {
 
     public static async move_to_parent(ctx: ServiceContext) {
         const { vfs } = ctx;
+
+        const dirname = path.dirname(ctx.vod.absolutePath);
+        const basename = path.basename(ctx.vod.absolutePath);
+        await vfs.move(ctx.vod.absolutePath, `${dirname}/../${basename}`);
+
+        ctx.body = {
+            success: true,
+        }
     }
 }
 
 export default new Router()
+    .use(prepareVideoInfo)
     .get('/fs/list', FS.list)
     .get('/fs/move_to_parent', FS.move_to_parent)
     ;

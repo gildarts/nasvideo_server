@@ -32,6 +32,20 @@ export class VideoFS {
             return fsentries;
         }
     }
+
+    /**
+     * 移動影片檔案(包含 zoemd 檔)。
+     * @param srcVideoPath 來源影片檔路徑。
+     * @param destVideoPath 目的目錄。
+     */
+    public async move(srcVideoPath: string, destVideoPath: string) {
+        const srcVideoZoemd = `${srcVideoPath}.zoemd`;
+        await fsex.move(srcVideoPath, destVideoPath);
+
+        if(await fsex.pathExists(srcVideoZoemd)) {
+            await fsex.move(srcVideoZoemd, `${destVideoPath}.zoemd`)
+        }
+    }
 }
 
 

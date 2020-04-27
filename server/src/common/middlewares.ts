@@ -2,6 +2,7 @@ import { ServiceContext } from '../types';
 import { db } from './database';
 import { getVideoRoot } from '../config';
 import { VideoFS } from '../videofs/video_fs';
+import { VideoFile } from '../videofs/video_file';
 
 export const setXFrameOptionsDENY = (ctx: ServiceContext, next: () => Promise<void>) => {
     ctx.response.set({
@@ -31,3 +32,27 @@ export const setVideoRoot = (ctx: ServiceContext, next: () => Promise<void>) => 
     ctx.vfs = new VideoFS(ctx.videoRoot);
     return next();
 };
+
+export const prepareVideoInfo = async (ctx: ServiceContext, next: any) => {
+    const { vfs } = ctx;
+
+    let video = '';
+    if (ctx.request.query?.video) {
+        video = ctx.request.query.video;
+    }
+
+    if (ctx.request.body?.video) {
+        video = ctx.request.body.video;
+    }
+
+    if (!video) {
+        ctx.body = {
+            status: 'not found!'
+        }
+        ctx.state = 404;
+        return;
+    }
+    ctx.vod = await VideoFile.fromFile(vfs, video);
+
+    return next();
+}

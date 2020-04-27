@@ -49,4 +49,8 @@ export class VideoFile {
         const exists = fsex.pathExistsSync(`${this.absolutePath}.zoemd`);
         return exists;
     }
+
+    public getZoemdPath() {
+        return `${this.absolutePath}.zoemd`;
+    }
 }
