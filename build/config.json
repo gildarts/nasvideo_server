@@ -29,6 +29,9 @@
         {
             "name": "8T",
             "path": "/8T"
+        }, {
+            "name": "hq",
+            "path": "/Users/yaoming/opt/highquality"
         }
     ]
 }

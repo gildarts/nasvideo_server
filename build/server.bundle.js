@@ -681,7 +681,7 @@ var database_1 = __webpack_require__(/*! ./common/database */ "./src/common/data
 exports.wrapCallback = function (cb) {
     var _this = this;
     return function (req, rsp) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-        var mongo, session, query, aUrl, sid, srcRecord, rpath, root, fullpath;
+        var mongo, session, query, aUrl, src, sid, srcRecord, rpath, root, fullpath;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -689,13 +689,14 @@ exports.wrapCallback = function (cb) {
                     session = mongo.collection('session');
                     query = qs.parseUrl(req.url);
                     aUrl = "path:" + query.url;
+                    src = query.query.src;
                     sid = getSessionId(req.headers.cookie);
                     return [4 /*yield*/, session.findOne({ session_id: sid })];
                 case 1:
                     srcRecord = (_a.sent()) || { data: {} };
                     if (!aUrl.startsWith('path:/media')) return [3 /*break*/, 3];
                     rpath = aUrl.replace('path:/media', '');
-                    root = config_1.getVideoRoot(srcRecord.data.video_src);
+                    root = config_1.getVideoRoot(src || srcRecord.data.video_src);
                     fullpath = path_1.default.join(root, rpath);
                     return [4 /*yield*/, fs_extra_1.default.pathExists(fullpath)];
                 case 2:
