@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Player View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="PlayerViewController" customModule="nasvideo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NAS Video Playing" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2W9-BD-gfN">
+                                <rect key="frame" x="136" y="344" width="142" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2br-Vi-0ez">
+                                <rect key="frame" x="0.0" y="44" width="414" height="300"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="Iru-58-Drp"/>
+                                </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Oen-w7-cl5" appends="YES" id="SeD-mP-r77"/>
+                                    <outletCollection property="gestureRecognizers" destination="N46-yp-8MU" appends="YES" id="vjD-ef-RtN"/>
+                                </connections>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tRG-Im-Mn5">
+                                <rect key="frame" x="192" y="384.5" width="30" height="30"/>
+                                <state key="normal" title="Play"/>
+                                <connections>
+                                    <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ERV-qr-xHz"/>
+                                </connections>
+                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="U07-KF-v6C">
+                                <rect key="frame" x="0.0" y="424.5" width="414" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RBA-Bj-evt">
+                                        <rect key="frame" x="0.0" y="0.0" width="68" height="30"/>
+                                        <state key="normal" title="Backward"/>
+                                        <connections>
+                                            <action selector="backward:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6TW-ZF-YI4"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dWn-lf-BBF">
+                                        <rect key="frame" x="358" y="0.0" width="56" height="30"/>
+                                        <state key="normal" title="Forward"/>
+                                        <connections>
+                                            <action selector="forward:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ycf-DF-few"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="2br-Vi-0ez" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="2K2-0v-chQ"/>
+                            <constraint firstItem="2W9-BD-gfN" firstAttribute="top" secondItem="2br-Vi-0ez" secondAttribute="bottom" id="84D-Ee-CLl"/>
+                            <constraint firstItem="tRG-Im-Mn5" firstAttribute="top" secondItem="2W9-BD-gfN" secondAttribute="bottom" constant="20" id="Bba-BK-TK0"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="2br-Vi-0ez" secondAttribute="trailing" id="CU4-Lm-5jq"/>
+                            <constraint firstItem="2br-Vi-0ez" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Nzb-4h-OEY"/>
+                            <constraint firstItem="2W9-BD-gfN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VZ8-8W-hz4"/>
+                            <constraint firstItem="U07-KF-v6C" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bRh-W6-bj1"/>
+                            <constraint firstItem="tRG-Im-Mn5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="evU-7E-em1"/>
+                            <constraint firstItem="U07-KF-v6C" firstAttribute="top" secondItem="tRG-Im-Mn5" secondAttribute="bottom" constant="10" id="hk6-4w-Zpu"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="U07-KF-v6C" secondAttribute="trailing" id="vpa-ex-YDV"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="movieScreen" destination="2br-Vi-0ez" id="6w4-2m-5Pf"/>
+                        <outlet property="msg" destination="2W9-BD-gfN" id="9Mc-iS-yRA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="Oen-w7-cl5">
+                    <connections>
+                        <action selector="swipeGo:" destination="BYZ-38-t0r" id="6aO-nk-TJp"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="N46-yp-8MU">
+                    <connections>
+                        <action selector="tapGo:" destination="BYZ-38-t0r" id="io9-07-nHu"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="139" y="130"/>
+        </scene>
+    </scenes>
+</document>

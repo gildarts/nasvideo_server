@@ -14,13 +14,14 @@ export const wrapCallback = function(cb: http.RequestListener) {
 
         const query = qs.parseUrl(req.url);
         const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
+        const src = query.query.src;
         const sid = getSessionId(req.headers.cookie);
-        // const srcRecord = await db.oneOrNone('select data from session WHERE session_id like $(sid)', {sid}) || {data: {}};
         const srcRecord = (await session.findOne({ session_id: sid })) || { data: {} }
 
         if(aUrl.startsWith('path:/media')) {
             const rpath = aUrl.replace('path:/media', '');
-            const root = getVideoRoot(srcRecord.data.video_src);
+            // 有指定 src 為優先。
+            const root = getVideoRoot(src || srcRecord.data.video_src);
             const fullpath = path.join(root, rpath);
 
             if(!await fsex.pathExists(fullpath) && query.query.default === 'jpg') {

@@ -1,0 +1,403 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3D46D9A9245D6DEA005CC671 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */; };
+		3D46D9AB245D6DEA005CC671 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */; };
+		3D46D9AD245D6DEA005CC671 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9AC245D6DEA005CC671 /* ViewController.swift */; };
+		3D46D9B0245D6DEA005CC671 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9AE245D6DEA005CC671 /* Main.storyboard */; };
+		3D46D9B2245D6DEC005CC671 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9B1245D6DEC005CC671 /* Assets.xcassets */; };
+		3D46D9B5245D6DEC005CC671 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9B3245D6DEC005CC671 /* LaunchScreen.storyboard */; };
+		3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */; };
+		AEE2303F67058F10E15B3F06 /* Pods_nasvideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3D46D9A5245D6DEA005CC671 /* nasvideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nasvideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		3D46D9AC245D6DEA005CC671 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3D46D9AF245D6DEA005CC671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3D46D9B1245D6DEC005CC671 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3D46D9B4245D6DEC005CC671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3D46D9B6245D6DEC005CC671 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3D46D9BC245D6E79005CC671 /* VLC-Bridge-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VLC-Bridge-Header.h"; sourceTree = "<group>"; };
+		3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		464A2F893F35DF79C584D947 /* Pods-nasvideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.debug.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.debug.xcconfig"; sourceTree = "<group>"; };
+		8B1FE24A767DD93593FE6F14 /* Pods-nasvideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.release.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.release.xcconfig"; sourceTree = "<group>"; };
+		A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nasvideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3D46D9A2245D6DEA005CC671 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEE2303F67058F10E15B3F06 /* Pods_nasvideo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0518CF6648B7A49DFA6B1129 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		34C9CA9542084C968C9585E2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				464A2F893F35DF79C584D947 /* Pods-nasvideo.debug.xcconfig */,
+				8B1FE24A767DD93593FE6F14 /* Pods-nasvideo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		3D46D99C245D6DEA005CC671 = {
+			isa = PBXGroup;
+			children = (
+				3D46D9A7245D6DEA005CC671 /* nasvideo */,
+				3D46D9A6245D6DEA005CC671 /* Products */,
+				34C9CA9542084C968C9585E2 /* Pods */,
+				0518CF6648B7A49DFA6B1129 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		3D46D9A6245D6DEA005CC671 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3D46D9A5245D6DEA005CC671 /* nasvideo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3D46D9A7245D6DEA005CC671 /* nasvideo */ = {
+			isa = PBXGroup;
+			children = (
+				3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */,
+				3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */,
+				3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */,
+				3D46D9AC245D6DEA005CC671 /* ViewController.swift */,
+				3D46D9AE245D6DEA005CC671 /* Main.storyboard */,
+				3D46D9B1245D6DEC005CC671 /* Assets.xcassets */,
+				3D46D9B3245D6DEC005CC671 /* LaunchScreen.storyboard */,
+				3D46D9B6245D6DEC005CC671 /* Info.plist */,
+				3D46D9BC245D6E79005CC671 /* VLC-Bridge-Header.h */,
+			);
+			path = nasvideo;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3D46D9A4245D6DEA005CC671 /* nasvideo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D46D9B9245D6DEC005CC671 /* Build configuration list for PBXNativeTarget "nasvideo" */;
+			buildPhases = (
+				583B9CF1B3C81929EC2DDBD7 /* [CP] Check Pods Manifest.lock */,
+				3D46D9A1245D6DEA005CC671 /* Sources */,
+				3D46D9A2245D6DEA005CC671 /* Frameworks */,
+				3D46D9A3245D6DEA005CC671 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = nasvideo;
+			productName = nasvideo;
+			productReference = 3D46D9A5245D6DEA005CC671 /* nasvideo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3D46D99D245D6DEA005CC671 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+				ORGANIZATIONNAME = ischool;
+				TargetAttributes = {
+					3D46D9A4245D6DEA005CC671 = {
+						CreatedOnToolsVersion = 11.0;
+					};
+				};
+			};
+			buildConfigurationList = 3D46D9A0245D6DEA005CC671 /* Build configuration list for PBXProject "nasvideo" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3D46D99C245D6DEA005CC671;
+			productRefGroup = 3D46D9A6245D6DEA005CC671 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3D46D9A4245D6DEA005CC671 /* nasvideo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3D46D9A3245D6DEA005CC671 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D46D9B5245D6DEC005CC671 /* LaunchScreen.storyboard in Resources */,
+				3D46D9B2245D6DEC005CC671 /* Assets.xcassets in Resources */,
+				3D46D9B0245D6DEA005CC671 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		583B9CF1B3C81929EC2DDBD7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-nasvideo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3D46D9A1245D6DEA005CC671 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D46D9AD245D6DEA005CC671 /* ViewController.swift in Sources */,
+				3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */,
+				3D46D9A9245D6DEA005CC671 /* AppDelegate.swift in Sources */,
+				3D46D9AB245D6DEA005CC671 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3D46D9AE245D6DEA005CC671 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3D46D9AF245D6DEA005CC671 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3D46D9B3245D6DEC005CC671 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3D46D9B4245D6DEC005CC671 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3D46D9B7245D6DEC005CC671 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "nasvideo/VLC-Bridge-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3D46D9B8245D6DEC005CC671 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "nasvideo/VLC-Bridge-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3D46D9BA245D6DEC005CC671 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 464A2F893F35DF79C584D947 /* Pods-nasvideo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3E2S2GG75G;
+				INFOPLIST_FILE = nasvideo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = tw.com.ym.nasvideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3D46D9BB245D6DEC005CC671 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8B1FE24A767DD93593FE6F14 /* Pods-nasvideo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3E2S2GG75G;
+				INFOPLIST_FILE = nasvideo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = tw.com.ym.nasvideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D46D9A0245D6DEA005CC671 /* Build configuration list for PBXProject "nasvideo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D46D9B7245D6DEC005CC671 /* Debug */,
+				3D46D9B8245D6DEC005CC671 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D46D9B9245D6DEC005CC671 /* Build configuration list for PBXNativeTarget "nasvideo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D46D9BA245D6DEC005CC671 /* Debug */,
+				3D46D9BB245D6DEC005CC671 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3D46D99D245D6DEA005CC671 /* Project object */;
+}
