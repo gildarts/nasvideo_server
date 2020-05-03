@@ -20,8 +20,8 @@ class PlayerViewController: UIViewController {
         
         self.web.navigationDelegate = self
         
-//        let target = "http://speedfusion.synology.me:3000/service/acl/source?src=\(src)"
-        let target = "http://192.168.100.65:4200/service/acl/source?src=\(src)"
+        let target = "http://speedfusion.synology.me:3000/service/acl/source?src=\(src)"
+//        let target = "http://192.168.100.65:4200/service/acl/source?src=\(src)"
         self.web.load(URLRequest(url: URL(string: target)!))
     }
 }

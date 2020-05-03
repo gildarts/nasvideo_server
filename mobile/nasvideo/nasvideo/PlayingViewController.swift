@@ -40,6 +40,7 @@ class PlayingViewController: UIViewController {
             "network-caching": 3000,
         ])
         media.delegate = self
+        mediaPlayer.audio.volume = 0
         mediaPlayer.media = media
         mediaPlayer.delegate = self
         mediaPlayer.drawable = self.playArea

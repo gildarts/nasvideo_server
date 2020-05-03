@@ -830,7 +830,7 @@ var ACL = /** @class */ (function () {
             return tslib_1.__generator(this, function (_a) {
                 src = ctx.query.src;
                 ctx.session.video_src = src;
-                ctx.body = "\n        <html>\n            <body><a href=\"/\">" + (src || 'default') + "</a></body>\n        </html>\n        ";
+                ctx.redirect('/play_list');
                 return [2 /*return*/];
             });
         });
