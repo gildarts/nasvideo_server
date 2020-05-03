@@ -8,26 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		3D46D9A9245D6DEA005CC671 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */; };
-		3D46D9AB245D6DEA005CC671 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */; };
-		3D46D9AD245D6DEA005CC671 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9AC245D6DEA005CC671 /* ViewController.swift */; };
 		3D46D9B0245D6DEA005CC671 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9AE245D6DEA005CC671 /* Main.storyboard */; };
 		3D46D9B2245D6DEC005CC671 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9B1245D6DEC005CC671 /* Assets.xcassets */; };
 		3D46D9B5245D6DEC005CC671 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D46D9B3245D6DEC005CC671 /* LaunchScreen.storyboard */; };
 		3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */; };
+		3D46D9C0245DC8FF005CC671 /* PlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */; };
+		3D46D9C6245DD2F2005CC671 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D46D9C5245DD2F2005CC671 /* WebKit.framework */; };
+		3DC331CD245EC16600697139 /* LibrarySegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC331CC245EC16600697139 /* LibrarySegue.swift */; };
 		AEE2303F67058F10E15B3F06 /* Pods_nasvideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3D46D9A5245D6DEA005CC671 /* nasvideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nasvideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D46D9A5245D6DEA005CC671 /* NAS Player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NAS Player.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		3D46D9AC245D6DEA005CC671 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3D46D9AF245D6DEA005CC671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3D46D9B1245D6DEC005CC671 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D46D9B4245D6DEC005CC671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D46D9B6245D6DEC005CC671 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3D46D9BC245D6E79005CC671 /* VLC-Bridge-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VLC-Bridge-Header.h"; sourceTree = "<group>"; };
 		3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingViewController.swift; sourceTree = "<group>"; };
+		3D46D9C5245DD2F2005CC671 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		3DC331CC245EC16600697139 /* LibrarySegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySegue.swift; sourceTree = "<group>"; };
 		464A2F893F35DF79C584D947 /* Pods-nasvideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.debug.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.debug.xcconfig"; sourceTree = "<group>"; };
 		8B1FE24A767DD93593FE6F14 /* Pods-nasvideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.release.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.release.xcconfig"; sourceTree = "<group>"; };
 		A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nasvideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D46D9C6245DD2F2005CC671 /* WebKit.framework in Frameworks */,
 				AEE2303F67058F10E15B3F06 /* Pods_nasvideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,6 +51,7 @@
 		0518CF6648B7A49DFA6B1129 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3D46D9C5245DD2F2005CC671 /* WebKit.framework */,
 				A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */,
 			);
 			name = Frameworks;
@@ -75,7 +79,7 @@
 		3D46D9A6245D6DEA005CC671 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3D46D9A5245D6DEA005CC671 /* nasvideo.app */,
+				3D46D9A5245D6DEA005CC671 /* NAS Player.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,9 +88,9 @@
 			isa = PBXGroup;
 			children = (
 				3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */,
+				3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */,
+				3DC331CC245EC16600697139 /* LibrarySegue.swift */,
 				3D46D9A8245D6DEA005CC671 /* AppDelegate.swift */,
-				3D46D9AA245D6DEA005CC671 /* SceneDelegate.swift */,
-				3D46D9AC245D6DEA005CC671 /* ViewController.swift */,
 				3D46D9AE245D6DEA005CC671 /* Main.storyboard */,
 				3D46D9B1245D6DEC005CC671 /* Assets.xcassets */,
 				3D46D9B3245D6DEC005CC671 /* LaunchScreen.storyboard */,
@@ -114,7 +118,7 @@
 			);
 			name = nasvideo;
 			productName = nasvideo;
-			productReference = 3D46D9A5245D6DEA005CC671 /* nasvideo.app */;
+			productReference = 3D46D9A5245D6DEA005CC671 /* NAS Player.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -193,10 +197,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D46D9AD245D6DEA005CC671 /* ViewController.swift in Sources */,
 				3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */,
 				3D46D9A9245D6DEA005CC671 /* AppDelegate.swift in Sources */,
-				3D46D9AB245D6DEA005CC671 /* SceneDelegate.swift in Sources */,
+				3D46D9C0245DC8FF005CC671 /* PlayingViewController.swift in Sources */,
+				3DC331CD245EC16600697139 /* LibrarySegue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,7 +276,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -327,7 +331,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -345,13 +349,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3E2S2GG75G;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = nasvideo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = tw.com.ym.nasvideo;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "NAS Player";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -364,13 +370,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3E2S2GG75G;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = nasvideo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = tw.com.ym.nasvideo;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "NAS Player";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
