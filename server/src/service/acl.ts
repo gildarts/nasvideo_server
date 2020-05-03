@@ -9,11 +9,12 @@ export class ACL {
 
         ctx.session.video_src = src;
 
-        ctx.body = `
-        <html>
-            <body><a href="/">${src || 'default'}</a></body>
-        </html>
-        `;
+        ctx.redirect('/play_list');
+        // ctx.body = `
+        // <html>
+        //     <body><a href="/">${src || 'default'}</a></body>
+        // </html>
+        // `;
     }
 
     public static async mongodb(ctx: ServiceContext) {

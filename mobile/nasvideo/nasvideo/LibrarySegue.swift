@@ -8,6 +8,18 @@
 
 import Foundation
 
+class HQ: UIStoryboardSegue {
+    override func perform() {
+        
+        let dest = destination as! PlayerViewController
+        
+        dest.src = "hq"
+        
+        source.present(destination, animated: true, completion: nil)
+    }
+}
+
+
 class Download: UIStoryboardSegue {
     override func perform() {
         

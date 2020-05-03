@@ -53,27 +53,34 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="94" translatesAutoresizingMaskIntoConstraints="NO" id="goh-Nn-5UL">
-                                <rect key="frame" x="153" y="194.5" width="69" height="278"/>
+                                <rect key="frame" x="153" y="132.5" width="69" height="402"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="suB-4c-Dfw">
-                                        <rect key="frame" x="0.0" y="0.0" width="69" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9AK-D0-PQQ" userLabel="HQ">
+                                        <rect key="frame" x="19.5" y="0.0" width="30" height="30"/>
+                                        <state key="normal" title="HQ"/>
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="presentation" customClass="HQ" customModule="NAS_Player" customModuleProvider="target" id="Al9-UM-2Il"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeH-gP-xr9">
+                                        <rect key="frame" x="14.5" y="124" width="40" height="30"/>
+                                        <state key="normal" title="Video"/>
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="presentation" customClass="Video" customModule="NAS_Player" customModuleProvider="target" id="SVc-ez-lm1"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" alpha="0.10000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="suB-4c-Dfw">
+                                        <rect key="frame" x="0.0" y="248" width="69" height="30"/>
                                         <state key="normal" title="Download"/>
                                         <connections>
                                             <segue destination="BYZ-38-t0r" kind="presentation" customClass="Download" customModule="NAS_Player" customModuleProvider="target" id="1v1-Qb-aDc"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sjh-kT-CZs">
-                                        <rect key="frame" x="19.5" y="124" width="30" height="30"/>
+                                    <button opaque="NO" alpha="0.10000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sjh-kT-CZs">
+                                        <rect key="frame" x="19.5" y="372" width="30" height="30"/>
                                         <state key="normal" title="8T"/>
                                         <connections>
                                             <segue destination="BYZ-38-t0r" kind="presentation" customClass="BigT" customModule="NAS_Player" customModuleProvider="target" id="hEF-Wu-cRK"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeH-gP-xr9">
-                                        <rect key="frame" x="14.5" y="248" width="40" height="30"/>
-                                        <state key="normal" title="Video"/>
-                                        <connections>
-                                            <segue destination="BYZ-38-t0r" kind="presentation" customClass="Video" customModule="NAS_Player" customModuleProvider="target" id="SVc-ez-lm1"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -204,6 +211,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="SVc-ez-lm1"/>
+        <segue reference="Al9-UM-2Il"/>
     </inferredMetricsTieBreakers>
 </document>
