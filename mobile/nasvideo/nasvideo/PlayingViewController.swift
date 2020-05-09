@@ -71,11 +71,13 @@ class PlayingViewController: UIViewController {
     }
     
     @IBAction func forward(_ sender: Any) {
-        mediaPlayer.extraShortJumpForward()
+//        mediaPlayer.extraShortJumpForward()
+        mediaPlayer.shortJumpForward()
     }
     
     @IBAction func backward(_ sender: Any) {
-        mediaPlayer.extraShortJumpBackward()
+//        mediaPlayer.extraShortJumpBackward()
+        mediaPlayer.shortJumpForward()
     }
     
     @IBAction func rePosition(_ sender: Any) {
