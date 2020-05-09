@@ -8,6 +8,8 @@
 
 import UIKit
 
+let JumpMilliSeconds: Int32 = 1000 * 60
+
 class PlayingViewController: UIViewController {
 
     var videoUrl: String = ""
@@ -19,8 +21,11 @@ class PlayingViewController: UIViewController {
     @IBOutlet weak var playArea: UIView!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var slowslider: UISlider!
-
-    var adjust: VLCTime? = nil
+    @IBOutlet weak var adjustTime: UILabel! // 調整中的時間。
+    @IBOutlet weak var slowStack: UIStackView!
+    
+    var adjustMiddle: VLCTime? = nil
+    var duration: VLCTime?
     
     var sliding = false
     
@@ -37,7 +42,7 @@ class PlayingViewController: UIViewController {
         // Set media options
         // https://wiki.videolan.org/VLC_command-line_help
         media.addOptions([
-            "network-caching": 3000,
+            "network-caching": 3500,
         ])
         media.delegate = self
         mediaPlayer.audio.volume = 0
@@ -61,9 +66,13 @@ class PlayingViewController: UIViewController {
         }
     }
     
+    @IBAction func rePosition(_ sender: Any) {
+        
+    }
+    
     @IBAction func slideEnd(_ sender: Any) {
         sliding = false
-        
+        syncTime()
         if !mediaPlayer.isPlaying {
             mediaPlayer.play()
         }
@@ -71,59 +80,101 @@ class PlayingViewController: UIViewController {
     }
     
     @IBAction func forward(_ sender: Any) {
-//        mediaPlayer.extraShortJumpForward()
-        mediaPlayer.shortJumpForward()
+        mediaPlayer.mediumJumpForward()
+        adjustSlider(milliSeconds: JumpMilliSeconds)
+        slowAdjStop()
     }
     
     @IBAction func backward(_ sender: Any) {
-//        mediaPlayer.extraShortJumpBackward()
-        mediaPlayer.shortJumpForward()
-    }
-    
-    @IBAction func rePosition(_ sender: Any) {
-        mediaPlayer.position = slider.value
+        mediaPlayer.mediumJumpBackward()
+        adjustSlider(milliSeconds: -JumpMilliSeconds)
+        slowAdjStop()
     }
     
     @IBAction func adjStart(_ sender: Any) {
         if mediaPlayer.isPlaying {
-            mediaPlayer.pause()
-            adjust = mediaPlayer.time
-            slowslider.isHidden = false
-            slowslider.value = 15000
+            slowAdjStart()
         } else {
-            mediaPlayer.play()
-            slowslider.isHidden = true
+            slowAdjStop()
         }
         
     }
-        
+
     @IBAction func slowReposition(_ sender: Any) {
         let add = slowslider.value >= 15000 ? slowslider.value - 15000 : -(15000 - slowslider.value)
 
-        if let adj = adjust {
-            let new = VLCTime(number: NSNumber(floatLiteral: Double(adj.value.floatValue + add)))
+        if let adj = adjustMiddle {
+            
+            let new = VLCTime(int: Int32(adj.value.floatValue + add))
             mediaPlayer.time = new
-            mediaPlayer.gotoNextFrame()
-            slider.value = mediaPlayer.position
+            syncAdjustLabel(new?.intValue)
+            syncSlider(new?.intValue)
+        }
+    }
+    
+    func syncSlider(_ absMilliSeconds: Int32? = nil) {
+        
+        if let abs = absMilliSeconds {
+            slider.value = Float(abs)
+        } else {
+            slider.value = Float(mediaPlayer.time.intValue)
+        }
+    }
+    
+    func syncTime() {
+        mediaPlayer.time = VLCTime(int: Int32(slider.value))
+    }
+    
+    func adjustSlider(milliSeconds: Int32) {
+        slider.value = slider.value + Float(milliSeconds)
+        syncTime()
+    }
+    
+    func adjustTime(milliSeconds: Int32) {
+        let current = mediaPlayer.time.intValue
+        let target = VLCTime(int: current + milliSeconds)
+        mediaPlayer.time = target
+        syncSlider(target?.intValue)
+    }
+    
+    func slowAdjStart() {
+        mediaPlayer.pause()
+        adjustMiddle = mediaPlayer.time
+        slowslider.value = 15000
+        slowStack.isHidden = false
+        syncAdjustLabel()
+    }
+    
+    func slowAdjStop() {
+        mediaPlayer.play()
+        slowStack.isHidden = true
+    }
+    
+    func syncAdjustLabel(_ absMilliSeconds: Int32? = nil) {
+        if let abs = absMilliSeconds {
+            adjustTime.text = "\(VLCTime(int: abs) ?? VLCTime())"
+        } else {
+            adjustTime.text = "\(mediaPlayer.time ?? VLCTime())"
         }
     }
 }
 
-extension PlayingViewController: VLCMediaDelegate {
-    
-    func mediaMetaDataDidChange(_ aMedia: VLCMedia) {
-//        print("mediaMetaDataDidChange")
-    }
-    
-    func mediaDidFinishParsing(_ aMedia: VLCMedia) {
-//        print("mediaDidFinishParsing")
-    }
-
-}
-
 extension PlayingViewController: VLCMediaPlayerDelegate {
+    
+    func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+        self.start.text = "\(self.mediaPlayer.time!)"
+        self.end.text = "\(mediaPlayer.remainingTime!)"
+
+        duration = mediaPlayer.media.length
+        slider.maximumValue = Float(duration!.intValue)
+
+        if !sliding {
+            slider.value = Float(mediaPlayer.time.intValue)
+        }
+    }
+    
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
-        
+                
         switch mediaPlayer.state {
         case .stopped:
             print("stoped")
@@ -140,7 +191,7 @@ extension PlayingViewController: VLCMediaPlayerDelegate {
             print("esAdded")
         case .playing:
             print("playing")
-            slowslider.isHidden = true
+            slowAdjStop()
         case .paused:
             print("paused")
         default:
@@ -151,13 +202,14 @@ extension PlayingViewController: VLCMediaPlayerDelegate {
             print("Error")
         }
     }
+}
 
-    func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-        self.start.text = "\(self.mediaPlayer.time!)"
-        self.end.text = "\(mediaPlayer.remainingTime!)"
-
-        if !sliding {
-            slider.value = mediaPlayer.position
-        }
+extension PlayingViewController: VLCMediaDelegate {
+    
+    func mediaMetaDataDidChange(_ aMedia: VLCMedia) {
     }
+    
+    func mediaDidFinishParsing(_ aMedia: VLCMedia) {
+    }
+
 }

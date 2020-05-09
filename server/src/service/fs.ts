@@ -18,19 +18,19 @@ export class FS {
 
         ctx.body = {
             videos: pathInfoList
-            .map(v => {
-                const video = new VideoFile(vr, v);
-                return {
-                    name: v.name,
-                    path: v.getPath(),
-                    size: v.isDir ? 0 : v.size, 
-                    isFile: v.isFile, 
-                    format: video.format,
-                    isVideo: VideoFile.isVideo(v),
-                    containsZoemd: VideoFile.isVideo(v) ? video.containsZoemd() : false,
-                    create_time: v.createTime,
-                };
-            })
+                .map(v => {
+                    const video = new VideoFile(vr, v);
+                    return {
+                        name: v.name,
+                        path: v.getPath(),
+                        size: v.isDir ? 0 : v.size,
+                        isFile: v.isFile,
+                        format: video.format,
+                        isVideo: VideoFile.isVideo(v),
+                        containsZoemd: VideoFile.isVideo(v) ? video.containsZoemd() : false,
+                        create_time: v.createTime,
+                    };
+                })
         };
     }
 
@@ -50,17 +50,27 @@ export class FS {
         const { vfs } = ctx;
         const { path } = ctx.params;
 
-        if(!path) throw new Error('沒有指定 path 參數。');
+        if (!path) throw new Error('沒有指定 path 參數。');
 
+        try {
+            await vfs.delete(path);
+
+            ctx.body = {
+                success: true,
+                path: path,
+            }
+        } catch (error) {
+            ctx.status = 404;
+            ctx.body = {
+                success: false,
+                message: error.message,
+            }
+        }
 
         // const dirname = path.dirname(ctx.vod.absolutePath);
         // const basename = path.basename(ctx.vod.absolutePath);
         // await vfs.move(ctx.vod.absolutePath, `${dirname}/../${basename}`);
 
-        ctx.body = {
-            success: true,
-            path: path,
-        }
     }
 }
 

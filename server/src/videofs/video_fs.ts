@@ -46,6 +46,18 @@ export class VideoFS {
             await fsex.move(srcVideoZoemd, `${destVideoPath}.zoemd`)
         }
     }
+
+    public async delete(relPath: string) {
+        const p = path.join(this.basePath, relPath);
+        const recycle = path.join(this.basePath, '/_recycle');
+        if(await fsex.pathExists(p)) {
+            await fsex.ensureDir(recycle);
+            const target = path.join(recycle, `${Date.now()}_${path.basename(p)}`);
+            await fsex.move(p, target);
+        } else {
+            throw new Error(`路徑不存在：${p}`);
+        }
+    }
 }
 
 

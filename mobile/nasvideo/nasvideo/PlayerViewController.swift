@@ -8,6 +8,7 @@
 
 import UIKit
 import WebKit
+import Alamofire
 
 class PlayerViewController: UIViewController {
                                 
@@ -17,11 +18,11 @@ class PlayerViewController: UIViewController {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.web.navigationDelegate = self
         
-        let target = "http://speedfusion.synology.me:3000/service/acl/source?src=\(src)"
-//        let target = "http://192.168.100.65:4200/service/acl/source?src=\(src)"
+//        let target = "http://speedfusion.synology.me:3000/service/acl/source?src=\(src)"
+        let target = "http://192.168.50.65:4200/service/acl/source?src=\(src)"
         self.web.load(URLRequest(url: URL(string: target)!))
     }
 }

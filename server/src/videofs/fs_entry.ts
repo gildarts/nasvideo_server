@@ -71,7 +71,8 @@ export class FSEntry {
         ]
 
         const endWiths = [
-            '.zoemd'
+            '.zoemd',
+            '_recycle'
         ]
 
         if (startWiths.find(v => this.name.startsWith(v))) {

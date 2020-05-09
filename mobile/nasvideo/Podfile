@@ -7,5 +7,6 @@ target 'nasvideo' do
 
   # Pods for VLC
   pod 'MobileVLCKit'
+  pod 'Alamofire', '~> 5.1'
 
 end
