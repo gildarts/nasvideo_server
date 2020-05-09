@@ -39,16 +39,34 @@ export class FS {
 
         const dirname = path.dirname(ctx.vod.absolutePath);
         const basename = path.basename(ctx.vod.absolutePath);
-        await vfs.move(ctx.vod.absolutePath, `${dirname}/../${basename}`);
+        await vfs.moveVideo(ctx.vod.absolutePath, `${dirname}/../${basename}`);
 
         ctx.body = {
             success: true,
+        }
+    }
+
+    public static async delete(ctx: ServiceContext) {
+        const { vfs } = ctx;
+        const { path } = ctx.params;
+
+        if(!path) throw new Error('沒有指定 path 參數。');
+
+
+        // const dirname = path.dirname(ctx.vod.absolutePath);
+        // const basename = path.basename(ctx.vod.absolutePath);
+        // await vfs.move(ctx.vod.absolutePath, `${dirname}/../${basename}`);
+
+        ctx.body = {
+            success: true,
+            path: path,
         }
     }
 }
 
 export default new Router()
     .use(prepareVideoInfo)
+    .delete('/fs/:path', FS.delete)
     .get('/fs/list', FS.list)
     .get('/fs/move_to_parent', FS.move_to_parent)
     ;

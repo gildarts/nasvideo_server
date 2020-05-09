@@ -38,7 +38,7 @@ export class VideoFS {
      * @param srcVideoPath 來源影片檔路徑。
      * @param destVideoPath 目的目錄。
      */
-    public async move(srcVideoPath: string, destVideoPath: string) {
+    public async moveVideo(srcVideoPath: string, destVideoPath: string) {
         const srcVideoZoemd = `${srcVideoPath}.zoemd`;
         await fsex.move(srcVideoPath, destVideoPath);
 
