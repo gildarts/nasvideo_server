@@ -688,7 +688,7 @@ exports.wrapCallback = function (cb) {
                     mongo = database_1.db.mongodb;
                     session = mongo.collection('session');
                     query = qs.parseUrl(req.url);
-                    aUrl = "path:" + query.url;
+                    aUrl = "path:" + decodeURIComponent(query.url);
                     src = query.query.src;
                     sid = getSessionId(req.headers.cookie);
                     return [4 /*yield*/, session.findOne({ session_id: sid })];
@@ -950,7 +950,7 @@ var FS = /** @class */ (function () {
                         vfs = ctx.vfs;
                         dirname = path_1.default.dirname(ctx.vod.absolutePath);
                         basename = path_1.default.basename(ctx.vod.absolutePath);
-                        return [4 /*yield*/, vfs.move(ctx.vod.absolutePath, dirname + "/../" + basename)];
+                        return [4 /*yield*/, vfs.moveVideo(ctx.vod.absolutePath, dirname + "/../" + basename)];
                     case 1:
                         _a.sent();
                         ctx.body = {
@@ -961,11 +961,46 @@ var FS = /** @class */ (function () {
             });
         });
     };
+    FS.delete = function (ctx) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var vfs, path, error_1;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        vfs = ctx.vfs;
+                        path = ctx.params.path;
+                        if (!path)
+                            throw new Error('沒有指定 path 參數。');
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, vfs.delete(path)];
+                    case 2:
+                        _a.sent();
+                        ctx.body = {
+                            success: true,
+                            path: path,
+                        };
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_1 = _a.sent();
+                        ctx.status = 404;
+                        ctx.body = {
+                            success: false,
+                            message: error_1.message,
+                        };
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return FS;
 }());
 exports.FS = FS;
 exports.default = new koa_router_1.default()
     .use(middlewares_1.prepareVideoInfo)
+    .delete('/fs/:path', FS.delete)
     .get('/fs/list', FS.list)
     .get('/fs/move_to_parent', FS.move_to_parent);
 
@@ -1320,7 +1355,8 @@ var FSEntry = /** @class */ (function () {
                 '#'
             ];
             var endWiths = [
-                '.zoemd'
+                '.zoemd',
+                '_recycle'
             ];
             if (startWiths.find(function (v) { return _this.name.startsWith(v); })) {
                 return true;
@@ -1565,7 +1601,7 @@ var VideoFS = /** @class */ (function () {
      * @param srcVideoPath 來源影片檔路徑。
      * @param destVideoPath 目的目錄。
      */
-    VideoFS.prototype.move = function (srcVideoPath, destVideoPath) {
+    VideoFS.prototype.moveVideo = function (srcVideoPath, destVideoPath) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var srcVideoZoemd;
             return tslib_1.__generator(this, function (_a) {
@@ -1583,6 +1619,31 @@ var VideoFS = /** @class */ (function () {
                         _a.sent();
                         _a.label = 4;
                     case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    VideoFS.prototype.delete = function (relPath) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var p, recycle, target;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        p = path_1.default.join(this.basePath, relPath);
+                        recycle = path_1.default.join(this.basePath, '/_recycle');
+                        return [4 /*yield*/, fs_extra_1.default.pathExists(p)];
+                    case 1:
+                        if (!_a.sent()) return [3 /*break*/, 4];
+                        return [4 /*yield*/, fs_extra_1.default.ensureDir(recycle)];
+                    case 2:
+                        _a.sent();
+                        target = path_1.default.join(recycle, Date.now() + "_" + path_1.default.basename(p));
+                        return [4 /*yield*/, fs_extra_1.default.move(p, target)];
+                    case 3:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 4: throw new Error("\u8DEF\u5F91\u4E0D\u5B58\u5728\uFF1A" + p);
+                    case 5: return [2 /*return*/];
                 }
             });
         });
