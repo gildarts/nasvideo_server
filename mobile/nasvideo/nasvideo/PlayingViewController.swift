@@ -62,7 +62,7 @@ class PlayingViewController: UIViewController {
     
     @IBAction func slideStart(_ sender: Any) {
         sliding = true
-        
+
         if mediaPlayer.isPlaying {
             mediaPlayer.pause()
         }
@@ -176,7 +176,7 @@ extension PlayingViewController: VLCMediaPlayerDelegate {
     }
     
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
-                
+
         switch mediaPlayer.state {
         case .stopped:
             print("stoped")
