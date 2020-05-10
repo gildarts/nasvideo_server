@@ -13,7 +13,7 @@ export const wrapCallback = function(cb: http.RequestListener) {
         const session = mongo.collection('session');
 
         const query = qs.parseUrl(req.url);
-        const aUrl = `path:${query.url}`; // 防止尋取代時不要出錯。
+        const aUrl = `path:${decodeURIComponent(query.url)}`; // 防止尋取代時不要出錯。
         const src = query.query.src;
         const sid = getSessionId(req.headers.cookie);
         const srcRecord = (await session.findOne({ session_id: sid })) || { data: {} }

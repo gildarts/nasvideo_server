@@ -8,6 +8,14 @@
 
 import UIKit
 
+enum AVError: Error {
+    case Arguments(String)
+}
+
+typealias AVFragment =  (video: String, seconds: Int32, replaySeconds: Int32)
+
+var NAS = "http://192.168.1.65:4200"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */; };
 		3D46D9C0245DC8FF005CC671 /* PlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */; };
 		3D46D9C6245DD2F2005CC671 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D46D9C5245DD2F2005CC671 /* WebKit.framework */; };
+		3D6C19692467D0B3001EDDBB /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6C19682467D0B3001EDDBB /* WelcomeViewController.swift */; };
 		3DC331CD245EC16600697139 /* LibrarySegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC331CC245EC16600697139 /* LibrarySegue.swift */; };
 		AEE2303F67058F10E15B3F06 /* Pods_nasvideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A08F4948F87C3AAAB55426BE /* Pods_nasvideo.framework */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 		3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingViewController.swift; sourceTree = "<group>"; };
 		3D46D9C5245DD2F2005CC671 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		3D6C19682467D0B3001EDDBB /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		3DC331CC245EC16600697139 /* LibrarySegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySegue.swift; sourceTree = "<group>"; };
 		464A2F893F35DF79C584D947 /* Pods-nasvideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.debug.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.debug.xcconfig"; sourceTree = "<group>"; };
 		8B1FE24A767DD93593FE6F14 /* Pods-nasvideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nasvideo.release.xcconfig"; path = "Target Support Files/Pods-nasvideo/Pods-nasvideo.release.xcconfig"; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		3D46D9A7245D6DEA005CC671 /* nasvideo */ = {
 			isa = PBXGroup;
 			children = (
+				3D6C19682467D0B3001EDDBB /* WelcomeViewController.swift */,
 				3D46D9BD245D6F36005CC671 /* PlayerViewController.swift */,
 				3D46D9BF245DC8FE005CC671 /* PlayingViewController.swift */,
 				3DC331CC245EC16600697139 /* LibrarySegue.swift */,
@@ -216,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D46D9BE245D6F36005CC671 /* PlayerViewController.swift in Sources */,
+				3D6C19692467D0B3001EDDBB /* WelcomeViewController.swift in Sources */,
 				3D46D9A9245D6DEA005CC671 /* AppDelegate.swift in Sources */,
 				3D46D9C0245DC8FF005CC671 /* PlayingViewController.swift in Sources */,
 				3DC331CD245EC16600697139 /* LibrarySegue.swift in Sources */,

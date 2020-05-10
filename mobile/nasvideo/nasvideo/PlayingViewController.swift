@@ -12,8 +12,10 @@ let JumpMilliSeconds: Int32 = 1000 * 60
 
 class PlayingViewController: UIViewController {
 
-    var videoUrl: String = ""
-
+    var videoUrl: String = "" //影片 Url
+    var seconds: Int32 = 0  // 播放開始秒數。
+    var replySeconds: Int32 = 0 // 播放 reply 秒數。
+    
     let mediaPlayer: VLCMediaPlayer = VLCMediaPlayer()
 
     @IBOutlet weak var start: UILabel!
@@ -207,9 +209,11 @@ extension PlayingViewController: VLCMediaPlayerDelegate {
 extension PlayingViewController: VLCMediaDelegate {
     
     func mediaMetaDataDidChange(_ aMedia: VLCMedia) {
+        mediaPlayer.time = VLCTime(int: seconds)
     }
     
     func mediaDidFinishParsing(_ aMedia: VLCMedia) {
+
     }
 
 }
