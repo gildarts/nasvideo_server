@@ -11,10 +11,10 @@ export class FS {
 
     public static async list(ctx: ServiceContext) {
         const { videoRoot } = ctx;
-        const { q = '.' } = ctx.query;
+        const { q = '.', all = false } = ctx.query;
 
         const vr = new VideoFS(videoRoot);
-        const pathInfoList = await vr.list(q);
+        const pathInfoList = await vr.list(q, all);
 
         ctx.body = {
             videos: pathInfoList
@@ -28,7 +28,7 @@ export class FS {
                         format: video.format,
                         isVideo: VideoFile.isVideo(v),
                         containsZoemd: VideoFile.isVideo(v) ? video.containsZoemd() : false,
-                        create_time: v.createTime,
+                        create_time: v.createTime
                     };
                 })
         };

@@ -12,11 +12,11 @@ export class VideoFS {
     /**
      *列出指定目錄檔案。
      * @param {string} relPath 子目錄名稱。
-     * @param {boolean} [withoutSystemFile=true] 不包含系統檔與穩藏檔，預設為「true」。
+     * @param {boolean} [withSystemFile=true] 不包含系統檔與穩藏檔，預設為「true」。
      */
-    public async list(relPath: string, withoutSystemFile: boolean = true) {
+    public async list(relPath: string, withSystemFile: boolean = true) {
         const entries = await fsex.readdir(path.join(this.basePath, relPath));
-        
+
         const fsentries: FSEntry[] = []
         for (const e of entries) {
             const file = path.join(relPath, e);
@@ -26,7 +26,7 @@ export class VideoFS {
             fsentries.push(new FSEntry(file, fpstat));
         }
 
-        if(withoutSystemFile) {
+        if(!withSystemFile) {
             return fsentries.filter(v => !v.isSystemFile);
         } else {
             return fsentries;

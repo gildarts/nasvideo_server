@@ -910,16 +910,16 @@ var FS = /** @class */ (function () {
     }
     FS.list = function (ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var videoRoot, _a, q, vr, pathInfoList;
-            return tslib_1.__generator(this, function (_b) {
-                switch (_b.label) {
+            var videoRoot, _a, _b, q, _c, all, vr, pathInfoList;
+            return tslib_1.__generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         videoRoot = ctx.videoRoot;
-                        _a = ctx.query.q, q = _a === void 0 ? '.' : _a;
+                        _a = ctx.query, _b = _a.q, q = _b === void 0 ? '.' : _b, _c = _a.all, all = _c === void 0 ? false : _c;
                         vr = new video_fs_1.VideoFS(videoRoot);
-                        return [4 /*yield*/, vr.list(q)];
+                        return [4 /*yield*/, vr.list(q, all)];
                     case 1:
-                        pathInfoList = _b.sent();
+                        pathInfoList = _d.sent();
                         ctx.body = {
                             videos: pathInfoList
                                 .map(function (v) {
@@ -932,7 +932,7 @@ var FS = /** @class */ (function () {
                                     format: video.format,
                                     isVideo: video_file_1.VideoFile.isVideo(v),
                                     containsZoemd: video_file_1.VideoFile.isVideo(v) ? video.containsZoemd() : false,
-                                    create_time: v.createTime,
+                                    create_time: v.createTime
                                 };
                             })
                         };
@@ -1543,10 +1543,10 @@ var VideoFS = /** @class */ (function () {
     /**
      *列出指定目錄檔案。
      * @param {string} relPath 子目錄名稱。
-     * @param {boolean} [withoutSystemFile=true] 不包含系統檔與穩藏檔，預設為「true」。
+     * @param {boolean} [withSystemFile=true] 不包含系統檔與穩藏檔，預設為「true」。
      */
-    VideoFS.prototype.list = function (relPath, withoutSystemFile) {
-        if (withoutSystemFile === void 0) { withoutSystemFile = true; }
+    VideoFS.prototype.list = function (relPath, withSystemFile) {
+        if (withSystemFile === void 0) { withSystemFile = true; }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var entries, fsentries, entries_1, entries_1_1, e, file, fpstat, e_1_1;
             var e_1, _a;
@@ -1585,7 +1585,7 @@ var VideoFS = /** @class */ (function () {
                         finally { if (e_1) throw e_1.error; }
                         return [7 /*endfinally*/];
                     case 9:
-                        if (withoutSystemFile) {
+                        if (!withSystemFile) {
                             return [2 /*return*/, fsentries.filter(function (v) { return !v.isSystemFile; })];
                         }
                         else {

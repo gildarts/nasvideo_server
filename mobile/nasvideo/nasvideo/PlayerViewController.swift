@@ -19,6 +19,9 @@ class PlayerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.web.scrollView.bounces = false
+        self.web.scrollView.alwaysBounceVertical = false
+        
         self.web.navigationDelegate = self
         
         let target = "\(NAS)/service/acl/source?src=\(src)"
