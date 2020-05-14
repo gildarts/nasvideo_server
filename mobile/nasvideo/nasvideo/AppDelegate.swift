@@ -14,7 +14,7 @@ enum AVError: Error {
 
 typealias AVFragment =  (video: String, seconds: Int32, replaySeconds: Int32)
 
-var NAS = "http://192.168.1.65:4200"
+var NAS = "http://192.168.100.65:4200"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

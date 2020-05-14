@@ -724,7 +724,7 @@ var getSessionId = function (cookie) {
     if (cookie.indexOf('koa_nasvideo') < 0) {
         return '';
     }
-    var pattern = /koa_nasvideo=([\w\d-]*);/;
+    var pattern = /koa_nasvideo=([\w\d-]*);?/;
     return pattern.exec(cookie)[1];
 };
 
