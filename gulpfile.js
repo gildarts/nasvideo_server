@@ -4,6 +4,7 @@ const devmem = require('./gulps/kills'); // 處理開發產生的相關 process�
 const output = require('./gulps/cleanup');
 const build = require('./gulps/build');
 const env = require('./gulps/install');
+const docker = require('./gulps/docker');
 
 const kill_parallels = parallel(devmem.ng_serve, devmem.webpack, devmem.pm2);
 
@@ -13,11 +14,12 @@ exports.copy = build.copy;
 exports.cleanup = output.cleanup;
 
 /** 核心指令 */
+exports.docker = series(docker.askver, docker.buildpush);
 exports.install = series(env.install_angular, env.install_service_modules);
 exports.build = series(output.cleanup, parallel(build.build_client, build.build_service), build.copy);
 exports.build_service = series(build.build_service, build.copy);
 exports.deploy = series(build.deploy);
-exports.prod = series(output.cleanup, exports.build, exports.deploy);
+exports.prod = series(docker.askver, output.cleanup, exports.build, exports.deploy, docker.buildpush);
 exports.dev = series(kill_parallels, parallel(devenv.mkcert, devenv.client_start, devenv.server_start_dev), devenv.server_start_pm2, devenv.pm2_log);
 exports.devclient = series(devmem.ng_serve, devenv.client_start);
 exports.devserver = series(parallel(devmem.webpack, devmem.pm2), devenv.server_start_dev, devenv.server_start_pm2, devenv.pm2_log);
